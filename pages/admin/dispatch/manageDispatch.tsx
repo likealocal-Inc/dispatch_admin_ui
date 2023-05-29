@@ -23,14 +23,13 @@ import { UserModel } from "@libs/client/models/user.model";
 import {
   BoardingDateComponent,
   DispatchProcessInfo,
-  InfoBox,
   InfoBoxWithTitle,
   InfomationComponent,
   LocationAndAddress,
   MyDaumPostcode,
   UserInfomation,
   orderTypeList,
-} from "./utils";
+} from "@libs/client/utils/dispatch.ui.utils";
 import {
   DispatchUtils,
   EnumDispatchStatus,

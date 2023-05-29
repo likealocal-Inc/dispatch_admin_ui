@@ -2,7 +2,7 @@ import { TextField } from "@mui/material";
 import DaumPostcode from "react-daum-postcode";
 import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
-import { UIType } from "./manageDispatch";
+import { UIType } from "../../../pages/admin/dispatch/manageDispatch";
 import "react-datepicker/dist/react-datepicker.css";
 
 const airportList = ["인천1공항", "인천2공항", "김포공항"];
