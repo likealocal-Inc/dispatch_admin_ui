@@ -1,0 +1,229 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Nunito:wght@200;300;400;500;600;700&display=swap");
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  /* background-color: #f0f1f5; */
+  position: relative;
+  font-family: "Nunito", "Montserrat", -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+    Helvetica Neue, sans-serif;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Add this class to hide horizontal scrolls */
+.hide-scroll-x::-webkit-scrollbar {
+  width: 0px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(3600deg);
+  }
+}
+
+.player-wrapper {
+  width: auto;
+  height: auto;
+}
+
+.react-player {
+  padding-top: 56.25%;
+  position: relative;
+}
+
+.react-player > div {
+  position: absolute;
+}
+
+.modal-bg-black .MuiBackdrop-root {
+  background-color: black;
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.swiperVisible {
+  overflow: hidden !important;
+}
+
+@media (max-width: 600px) {
+  * {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  }
+  .swiperVisible {
+    overflow: visible !important;
+  }
+  .swiperHor::before,
+  .swiperHor::after {
+    display: none;
+  }
+  .swiperHor .swiper-button-next {
+    right: -22px;
+    display: none;
+  }
+  .swiperHor .swiper-button-prev {
+    left: -22px;
+    display: none;
+  }
+}
+
+.swiperCustom {
+  overflow: visible !important;
+}
+
+.swiperCustom .swiper-pagination {
+  bottom: -26px !important;
+  width: 70% !important;
+  left: 15% !important;
+  display: flex;
+  justify-content: center;
+}
+
+.swiperCustom .swiper-pagination-bullet {
+  width: 12px;
+  background: none;
+}
+
+.swiperCustom .swiper-pagination-bullet {
+  width: var(
+    --swiper-pagination-bullet-width,
+    var(--swiper-pagination-bullet-size, 12px)
+  );
+  height: var(
+    --swiper-pagination-bullet-height,
+    var(--swiper-pagination-bullet-size, 12px)
+  );
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20.4 3.40001C22 5.00001 22 7.40001 20.4 9.00001L9 20.4C7.4 22 5 22 3.4 20.4C1.8 18.8 1.8 16.4 3.4 14.8L14.8 3.40001C16.4 1.80001 18.8 1.80001 20.4 3.40001Z' fill='%23E6E8F0'/%3E%3C/svg%3E");
+  opacity: 1;
+}
+
+.swiperCustom .swiper-pagination-bullet-active {
+  width: 12px;
+  background: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20.4 3.40001C22 5.00001 22 7.40001 20.4 9.00001L9 20.4C7.4 22 5 22 3.4 20.4C1.8 18.8 1.8 16.4 3.4 14.8L14.8 3.40001C16.4 1.80001 18.8 1.80001 20.4 3.40001Z' fill='%235E6370'/%3E%3C/svg%3E");
+  opacity: 1;
+}
+.swiperCustom
+  .swiper-pagination-horizontal.swiper-pagination-bullets
+  .swiper-pagination-bullet {
+  margin: 0 var(--swiper-pagination-bullet-horizontal-gap, 6px);
+  display: flex;
+}
+
+.borderDashed {
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='24' ry='24' stroke='rgb(206, 208, 214, 1)' stroke-width='1' stroke-dasharray='3%2c 4' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 24px !important;
+  border: none !important;
+}
+
+.borderDashed2 {
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='rgb(206, 208, 214, 1)' stroke-width='1' stroke-dasharray='3%2c 4' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 15px !important;
+  border: none !important;
+}
+
+.shadowBtn {
+  box-shadow: 0px 4px 0px #e6e8f0;
+}
+
+/* .swiperHor:hover .swiper-button-next,.swiperHor:hover  .swiper-button-prev {
+  opacity: 1;
+} */
+
+.swiperHor .swiper-button-next,
+.swiperHor .swiper-button-prev {
+  width: 48px;
+  height: 48px;
+  background-color: #fff;
+  border: 1px solid #f0f1f5;
+  border-radius: 100%;
+  opacity: 0;
+}
+
+.swiperHor:hover .swiper-button-next,
+.swiperHor:hover .swiper-button-prev {
+  opacity: 1;
+}
+
+.swiperHor .swiper-button-next {
+  right: -24px;
+}
+
+.swiperHor .swiper-button-prev {
+  left: -24px;
+}
+
+.swiperHor.swiper {
+  overflow: visible;
+}
+
+.swiperHor::before,
+.swiperHor::after {
+  content: "";
+  width: 26px;
+  height: 100%;
+  position: absolute;
+  background-color: #f0f1f5;
+  top: 0;
+  z-index: 5;
+}
+
+.swiperHor::before {
+  left: -26px;
+}
+
+.swiperHor::after {
+  right: -26px;
+}
+
+.swiperHor .swiper-button-prev:after,
+.swiperHor .swiper-button-next:after {
+  content: "";
+  width: 28px;
+  height: 28px;
+}
+
+.swiperHor .swiper-button-prev:after {
+  background: url("data:image/svg+xml;charset=UTF-8,%3csvg class='' style='display:inline-block;vertical-align:middle' width='28' height='28' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3e%3cpath style='fill:%235E6370' d='M328.533 654.532l192 132.267c51.2 38.4 119.467 42.667 174.933 12.8 59.733-29.867 93.867-85.333 93.867-149.333v-268.798c0-64-34.133-123.733-93.867-149.333-21.333-17.067-51.2-25.6-76.8-25.6-34.133 0-68.267 8.533-98.133 29.867l-192 136.533c-46.933 29.867-72.533 85.332-72.533 140.798s25.6 106.667 72.533 140.8zM618.667 377.201v268.798l-192-132.267 192-136.532z'%3e%3c/path%3e%3c/svg%3e")
+    no-repeat;
+}
+
+.swiperHor .swiper-button-next:after {
+  background: url("data:image/svg+xml;charset=UTF-8,%3csvg class='' style='display:inline-block;vertical-align:middle' width='28' height='28' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3e%3cpath style='fill:%235E6370' d='M716.8 371.2l-192-132.267c-51.2-38.4-119.467-42.667-174.933-12.8-59.733 29.867-93.867 85.333-93.867 149.333v268.8c0 64 34.133 123.733 93.867 149.333 21.333 17.067 51.2 25.6 76.8 25.6 34.133 0 68.267-8.533 98.133-29.867l192-136.533c46.933-29.867 72.533-85.333 72.533-140.8s-25.6-106.666-72.533-140.8zM426.667 648.533v-268.8l192 132.266-192 136.533z'%3e%3c/path%3e%3c/svg%3e")
+    no-repeat;
+}
+
+.swiperHor .swiper-button-prev.swiper-button-disabled,
+.swiperHor .swiper-button-next.swiper-button-disabled {
+  opacity: 0;
+}
+
+/* form */
+.customInput::before,
+.customInput:hover:before,
+.customInput:focus:before,
+.customInput::after {
+  border: 0 !important;
+}

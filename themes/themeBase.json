@@ -1,0 +1,108 @@
+{
+    "global": {
+        "Text": {
+            "Primary": {
+                "value": "#000000de",
+                "type": "color",
+                "description": "Text primary"
+            },
+            "Secondary": {
+                "value": "#00000099",
+                "type": "color",
+                "description": "Text secondary"
+            },
+            "Disabled": {
+                "value": "#00000061",
+                "type": "color"
+            }
+        },
+        "Paper": {
+            "Dark": {
+                "value": "#00000099",
+                "type": "color",
+                "description": "Alternative dark shade"
+            },
+            "Light": {
+                "value": "#E5E5E5",
+                "type": "color",
+                "description": "Alternative light shade"
+            }
+        },
+        "Primary": {
+            "Main": {
+                "value": "#875CFF",
+                "type": "color",
+                "description": "Main color used by most components"
+            },
+            "Dark": {
+                "value": "#004c8e",
+                "type": "color",
+                "description": "Alternative dark shade"
+            },
+            "Light": {
+                "value": "#4ba2ed",
+                "type": "color",
+                "description": "Alternative light shade"
+            },
+            "States": {
+                "Outlined Resting Border": {
+                    "value": "#006ecd80",
+                    "type": "color",
+                    "description": "Fill background color for outlined & text variant components in hover state (Button, etc)"
+                },
+                "Outlined Hover Background": {
+                    "value": "#006ecd14",
+                    "type": "color",
+                    "description": "Used for outlined variant components in resting state (Button, Chip, etc)"
+                },
+                "Contained Hover Background": {
+                    "value": "#004c8e",
+                    "type": "color",
+                    "description": "Fill background for contained variant components in hover state."
+                }
+            }
+        },
+        "gray": {
+            "30": {
+                "value": "#F0F1F5",
+                "type": "color"
+            },
+            "40": {
+                "value": "#F5F6FA",
+                "type": "color"
+            },
+            "50": {
+                "value": "#FAFBFC",
+                "type": "color"
+            },
+            "70": {
+                "value": "#969AA3",
+                "type": "color"
+            },
+            "90": {
+                "value": "#33363D",
+                "type": "color"
+            },
+            "150": {
+                "value": "#E6E8F0",
+                "type": "color"
+            },
+            "250": {
+                "value": "#CED0D6",
+                "type": "color"
+            },
+            "350": {
+                "value": "#5E6370",
+                "type": "color"
+            },
+            "410": {
+                "value": "#111214",
+                "type": "color"
+            },
+            "950": {
+                "value": "#000000de",
+                "type": "color"
+            }
+        }
+    }
+}
