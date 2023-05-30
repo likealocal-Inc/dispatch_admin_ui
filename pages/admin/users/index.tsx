@@ -9,6 +9,7 @@ import { MessageProps } from "@components/MessageShow/show";
 import ManageUserModal from "./manageUser";
 import TableTemplate from "@components/ListTable/TableTemplate";
 import Button02 from "@components/buttons/Button02";
+import AdminLayout from "@components/layouts/AdminLayout";
 
 export default function Users() {
   // 메세지 출력관련
@@ -146,26 +147,36 @@ export default function Users() {
 
   return (
     <>
-      <div className='h-screen p-5 bg-gray-500'>
-        <TableTemplate
-          title='사용자 관리'
-          headers={headers}
-          headerWidths={headerWidths}
-          body={body}
-          listCallUrl={APIURLs.USER_LIST}
-          reload={reload}
-          message={message!}
-          setMessage={setMessage}
-          onCreate={handleCreateModalOpen}
-        />
+      <AdminLayout menuTitle={"사용자 관리"}>
+        <div className='h-screen p-5 bg-gray-500'>
+          <div className='flex items-center justify-end p-2'>
+            <button
+              className='w-24 h-10 mr-2 font-bold text-white rounded-lg bg-slate-800 hover:bg-amber-300 hover:text-red-700'
+              onClick={() => handleCreateModalOpen()}
+            >
+              생성
+            </button>
+          </div>
+          <TableTemplate
+            title='사용자 관리'
+            headers={headers}
+            headerWidths={headerWidths}
+            body={body}
+            listCallUrl={APIURLs.USER_LIST}
+            reload={reload}
+            message={message!}
+            setMessage={setMessage}
+            onCreate={handleCreateModalOpen}
+          />
 
-        <ManageUserModal
-          isModify={isModify}
-          open={openModal}
-          user={selectUser}
-          handleModalClose={handleModalClose}
-        />
-      </div>
+          <ManageUserModal
+            isModify={isModify}
+            open={openModal}
+            user={selectUser}
+            handleModalClose={handleModalClose}
+          />
+        </div>
+      </AdminLayout>
     </>
   );
 }

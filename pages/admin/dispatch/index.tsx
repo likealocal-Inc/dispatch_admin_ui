@@ -9,6 +9,11 @@ import { DispatchUtils } from "@libs/client/utils/dispatch.utils";
 import { OrderModel } from "@libs/client/models/order.model";
 import ManageDispatchModal, { UIType } from "./manageDispatch";
 import { Button } from "@mui/material";
+import AdminLayout from "@components/layouts/AdminLayout";
+import {
+  SelectBoxCompanyList,
+  SelectBoxStatusList,
+} from "@libs/client/utils/dispatch.ui.utils";
 
 export default function Orders() {
   // 메세지 출력관련
@@ -47,6 +52,7 @@ export default function Orders() {
 
   const headers = [
     "배차상태",
+    "회사",
     "주문일시",
     "주문상품",
     "소속/이름/직급",
@@ -58,7 +64,7 @@ export default function Orders() {
     "배차처리",
   ];
 
-  const headerWidths = [8, 12, 15, 10, 8, 10, 10, 10, 10, 3];
+  const headerWidths = [8, 8, 10, 15, 12, 8, 10, 10, 10, 10, 3];
 
   const body = (res: OrderModel[]) => {
     return (
@@ -75,46 +81,63 @@ export default function Orders() {
                 {DispatchUtils.getStatusString(d.status)}
               </div>
             </StyledTableCell>
+            <StyledTableCell component='th' scope='row'>
+              <div className='flex justify-center font-bold text-slate-600'>
+                {d.company}
+              </div>
+            </StyledTableCell>
             <StyledTableCell
               component='th'
               scope='row'
+              className='flex justify-center'
               dangerouslySetInnerHTML={{
                 __html: DateUtils.stringToDate(d.orderTime),
               }}
             ></StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              <div className='text-xs'>{d.orderTitle}</div>
+              <div className='flex justify-center font-bold'>
+                <div className='text-xs'>{d.orderTitle}</div>
+              </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              {d.user.company}/{d.user.name}/{d.user.position}
+              <div className='flex justify-center'>
+                {d.user.company}/{d.user.name}/{d.user.position}
+              </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              {d.user.phone}
+              <div className='flex justify-center'>{d.user.phone}</div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              {d.user.email}
+              <div className='flex justify-center'>{d.user.email}</div>
             </StyledTableCell>
             <StyledTableCell
               component='th'
               scope='row'
+              className='flex justify-center'
               dangerouslySetInnerHTML={{
                 __html: `${DateUtils.iso8601DateToString(d.boardingDate)}`,
               }}
             ></StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              {d.startLocation === "" ? d.startAirport : d.startLocation}
+              <div className='flex justify-center'>
+                {d.startLocation === "" ? d.startAirport : d.startLocation}
+              </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              {d.goalLocation === "" ? d.goalAirport : d.goalLocation}
+              <div className='flex justify-center'>
+                {d.goalLocation === "" ? d.goalAirport : d.goalLocation}
+              </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              <Button
-                variant='contained'
-                className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
-                onClick={() => onModifyDispatch(d)}
-              >
-                배차
-              </Button>
+              <div className='flex justify-center'>
+                <Button
+                  variant='contained'
+                  className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
+                  onClick={() => onModifyDispatch(d)}
+                >
+                  배차
+                </Button>
+              </div>
             </StyledTableCell>
           </StyledTableRow>
         );
@@ -124,30 +147,32 @@ export default function Orders() {
 
   return (
     <>
-      <div className='p-5 bg-gray-500'>
-        <TableTemplate
-          title='아임웹 주문 관리'
-          headers={headers}
-          headerWidths={headerWidths}
-          body={body}
-          listCallUrl={APIURLs.ORDER_LIST}
-          reload={reload}
-          message={message!}
-          setMessage={setMessage}
-          onCreate={onCreateOpen}
-        />
-
-        {openModal ? (
-          <ManageDispatchModal
-            uiType={uiType}
-            open={openModal}
-            handleModalClose={handleModalClose}
-            order={selectOrder}
+      <AdminLayout menuTitle={"아이웹 주문 관리"}>
+        <div className='p-5 bg-gray-500'>
+          <TableTemplate
+            title='아임웹 주문 관리'
+            headers={headers}
+            headerWidths={headerWidths}
+            body={body}
+            listCallUrl={APIURLs.ORDER_LIST}
+            reload={reload}
+            message={message!}
+            setMessage={setMessage}
+            onCreate={onCreateOpen}
           />
-        ) : (
-          ""
-        )}
-      </div>
+
+          {openModal ? (
+            <ManageDispatchModal
+              uiType={uiType}
+              open={openModal}
+              handleModalClose={handleModalClose}
+              order={selectOrder}
+            />
+          ) : (
+            ""
+          )}
+        </div>
+      </AdminLayout>
     </>
   );
 }

@@ -21,4 +21,5 @@ export interface OrderModel {
   status: string;
   userId: number;
   user: UserModel;
+  company: string;
 }

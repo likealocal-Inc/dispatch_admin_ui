@@ -27,6 +27,7 @@ import {
   InfomationComponent,
   LocationAndAddress,
   MyDaumPostcode,
+  SelectBoxStatusList,
   UserInfomation,
   orderTypeList,
 } from "@libs/client/utils/dispatch.ui.utils";
@@ -496,7 +497,12 @@ export default function ManageDispatchModal({
                             />
                             <div className='flex flex-row items-center w-72'>
                               <div className='w-28'>상태값</div>
-                              <select
+
+                              <SelectBoxStatusList
+                                id='dispatchStatus'
+                                selectStatus={order?.status}
+                              />
+                              {/* <select
                                 className='w-full m-3 rounded-lg'
                                 id='dispatchStatus'
                               >
@@ -513,7 +519,7 @@ export default function ManageDispatchModal({
                                     </option>
                                   );
                                 })}
-                              </select>
+                              </select> */}
                             </div>
                           </div>
                         </div>

@@ -3,12 +3,15 @@ import AdminLayout from "@components/layouts/AdminLayout";
 import { callAPI } from "@libs/client/call/call";
 import { APIURLs } from "@libs/client/constants";
 import useCallAPI, { UseAPICallResult } from "@libs/client/hooks/useCallAPI";
+import { CompanyModel } from "@libs/client/models/company.model";
 import { UserModel } from "@libs/client/models/user.model";
 import React, { useEffect, useState } from "react";
 
 const ProfileEdit = () => {
   const [profile, setProfile] = useState<UserModel>();
   const [message, setMessage] = useState("");
+
+  const [companyList, setCompanyList] = useState<CompanyModel[]>([]);
 
   // 모달 설정
   const [isOpen, setIsOpen] = useState(false);
@@ -43,10 +46,20 @@ const ProfileEdit = () => {
   };
 
   useEffect(() => {
+    // 나의 정보 불러 오기
     callAPI({ urlInfo: APIURLs.ME }).then((d) => {
       const user = d.json().then((d) => {
         setProfile(d.data);
       });
+    });
+
+    // 업체 리스트 불러오기
+    callAPI({
+      urlInfo: APIURLs.COMPANY_LIST,
+      params: { size: 99999, page: 0 },
+    }).then(async (d) => {
+      const data = await d.json();
+      setCompanyList(data.data.data);
     });
   }, []);
 
@@ -73,7 +86,7 @@ const ProfileEdit = () => {
                     Email
                   </label>
                   <input
-                    className='w-full px-3 py-2 font-bold leading-tight text-white border rounded shadow appearance-none bg-gray-70 focus:outline-none focus:shadow-outline'
+                    className='w-full px-3 py-2 font-bold leading-tight text-gray-800 border rounded shadow appearance-none bg-slate-300 focus:outline-none focus:shadow-outline'
                     id='email'
                     name='email'
                     type='email'
@@ -99,22 +112,60 @@ const ProfileEdit = () => {
                     }}
                   />
                 </div>
-                <label
-                  className='block mb-2 text-sm font-bold text-gray-700'
-                  htmlFor='phone'
-                >
-                  Phone
-                </label>
-                <input
-                  className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
-                  id='phone'
-                  name='phone'
-                  type='text'
-                  value={profile ? profile.phone : ""}
-                  onChange={(v) => {
-                    setProfile({ ...profile, phone: v.target.value });
-                  }}
-                />
+                <div className='mb-4'>
+                  <label
+                    className='block mb-2 text-sm font-bold text-gray-700'
+                    htmlFor='name'
+                  >
+                    이름
+                  </label>
+                  <input
+                    className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+                    id='name'
+                    name='name'
+                    type='text'
+                    value={profile ? profile.name : ""}
+                    onChange={(v) => {
+                      setProfile({ ...profile, name: v.target.value });
+                    }}
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label
+                    className='block mb-2 text-sm font-bold text-gray-700'
+                    htmlFor='position'
+                  >
+                    직급
+                  </label>
+                  <input
+                    className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+                    id='position'
+                    name='position'
+                    type='text'
+                    value={profile ? profile.position : ""}
+                    onChange={(v) => {
+                      setProfile({ ...profile, position: v.target.value });
+                    }}
+                  />
+                </div>
+                <div className='mb-4'>
+                  <label
+                    className='block mb-2 text-sm font-bold text-gray-700'
+                    htmlFor='phone'
+                  >
+                    Phone
+                  </label>
+                  <input
+                    className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
+                    id='phone'
+                    name='phone'
+                    type='text'
+                    value={profile ? profile.phone : ""}
+                    onChange={(v) => {
+                      setProfile({ ...profile, phone: v.target.value });
+                    }}
+                  />
+                </div>
               </div>
               <div className='mb-4'>
                 <label
@@ -124,6 +175,40 @@ const ProfileEdit = () => {
                   Company
                 </label>
                 <input
+                  className='w-full px-3 py-2 font-bold leading-tight text-gray-800 border rounded shadow appearance-none bg-slate-300 focus:outline-none focus:shadow-outline'
+                  disabled
+                  value={profile ? profile.company : ""}
+                />
+                {/* <SelectBoxCompanyList
+                  id='company'
+                  onChange={(v: string) => {
+                    setProfile({ ...profile, company: v });
+                  }}
+                  selectCompany={profile.company}
+                /> */}
+                {/* <select
+                  className='w-full px-3 py-3 text-sm transition-all duration-150 ease-linear bg-white rounded shadow placeholder-blueGray-300 text-blueGray-600 focus:outline-none focus:ring'
+                  id='company'
+                  required={true}
+                  onChange={(e) => {
+                    setProfile({ ...profile, company: e.target.value });
+                  }}
+                >
+                  {companyList.length > 0 &&
+                    companyList.map((d, key) => {
+                      return (
+                        <option
+                          key={d.id}
+                          value={d.name}
+                          selected={d.name === profile.company ? true : false}
+                        >
+                          {d.name}
+                        </option>
+                      );
+                    })}
+                </select> */}
+
+                {/* <input
                   className='w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline'
                   id='company'
                   name='company'
@@ -132,7 +217,7 @@ const ProfileEdit = () => {
                   onChange={(v) => {
                     setProfile({ ...profile, company: v.target.value });
                   }}
-                />
+                /> */}
               </div>
 
               <div className='w-full pt-2 pb-3 border-t border-red-500'></div>

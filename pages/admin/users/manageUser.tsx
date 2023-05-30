@@ -17,6 +17,7 @@ import { getHTMLElementByID } from "../../../libs/client/utils/html";
 import { useEffect, useState } from "react";
 import { callAPI } from "@libs/client/call/call";
 import { CompanyModel } from "@libs/client/models/company.model";
+import { SelectBoxCompanyList } from "@libs/client/utils/dispatch.ui.utils";
 
 interface ModalProps {
   isModify: boolean;
@@ -67,15 +68,17 @@ export default function ManageUserModal({
 
   const onSubmit = () => {
     const phone = getHTMLElementByID<HTMLInputElement>("m-phone").value;
-    const companyObj = getHTMLElementByID<HTMLSelectElement>("m-company");
-    const company = companyObj.options[companyObj.selectedIndex].value;
-
     const password = getHTMLElementByID<HTMLInputElement>("m-password").value;
     const email = getHTMLElementByID<HTMLInputElement>("m-email").value;
     const position = getHTMLElementByID<HTMLInputElement>("m-position").value;
     const name = getHTMLElementByID<HTMLInputElement>("m-name").value;
-
-    call({ phone, company, password, email, position, name });
+    if (isModify === false) {
+      const companyObj = getHTMLElementByID<HTMLSelectElement>("m-company");
+      const company = companyObj.options[companyObj.selectedIndex].value;
+      call({ phone, company, password, email, position, name });
+    } else {
+      call({ phone, password, email, position, name });
+    }
   };
 
   return (
@@ -113,7 +116,7 @@ export default function ManageUserModal({
                         <TextField
                           id='m-email'
                           defaultValue={isModify ? user!.email : ""}
-                          className='w-full'
+                          className={`w-full`}
                           InputProps={{
                             readOnly: isModify ? true : false,
                           }}
@@ -144,7 +147,20 @@ export default function ManageUserModal({
                       </div>
                       <div className='flex flex-row items-center w-72'>
                         <div className='w-24'>회사명</div>
-                        <select
+                        {isModify ? (
+                          <div className='w-full p-2 border-2 rounded-lg bg-slate-200'>
+                            {user?.company}
+                          </div>
+                        ) : (
+                          <SelectBoxCompanyList
+                            id={"m-company"}
+                            onChange={(d: string) => {}}
+                            selectCompany={user?.company}
+                            required={true}
+                          />
+                        )}
+
+                        {/* <select
                           className='text-sm duration-150 bg-white rounded shadow w-72 placeholder-blueGray-300 text-blueGray-600 focus:outline-none focus:ring'
                           id='m-company'
                           required={true}
@@ -167,7 +183,7 @@ export default function ManageUserModal({
                                 </option>
                               );
                             })}
-                        </select>
+                        </select> */}
                       </div>
 
                       <div className='flex flex-row items-center w-72'>
