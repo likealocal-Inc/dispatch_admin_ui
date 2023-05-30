@@ -25,6 +25,7 @@ interface TableTemplatProps {
   message: MessageProps;
   setMessage: Function;
   onCreate?: Function;
+  isShowSearch: boolean;
 }
 
 export default function TableTemplate({
@@ -36,6 +37,7 @@ export default function TableTemplate({
   message,
   setMessage,
   onCreate,
+  isShowSearch = false,
 }: TableTemplatProps) {
   const [page, setPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -75,32 +77,36 @@ export default function TableTemplate({
       {loading && <Loading />}
       <div className='bg-gray-500'>
         <div className='flex justify-between pt-2 pb-1 pr-2'>
-          <div className='flex flex-row'>
-            <div className='flex flex-row items-center w-auto pl-10'>
-              <div className='font-bold text-white w-52'>배차상태:</div>
-              <SelectBoxStatusList
-                id='searchStatus'
-                isSearch={true}
-                onChange={(e: string) => {
-                  setCondition({ ...condition, status: e });
-                }}
-              />
-              <div className='w-32 font-bold text-white'>업체:</div>
-              <SelectBoxCompanyList
-                id='searchCompany'
-                isSearch={true}
-                onChange={(e: string) => {
-                  setCondition({ ...condition, company: e });
-                }}
-              />
+          {isShowSearch ? (
+            <div className='flex flex-row'>
+              <div className='flex flex-row items-center w-auto pl-10'>
+                <div className='font-bold text-white w-52'>배차상태:</div>
+                <SelectBoxStatusList
+                  id='searchStatus'
+                  isSearch={true}
+                  onChange={(e: string) => {
+                    setCondition({ ...condition, status: e });
+                  }}
+                />
+                <div className='w-32 font-bold text-white'>업체:</div>
+                <SelectBoxCompanyList
+                  id='searchCompany'
+                  isSearch={true}
+                  onChange={(e: string) => {
+                    setCondition({ ...condition, company: e });
+                  }}
+                />
+              </div>
+              <button
+                className='w-20 m-3 bg-green-400 rounded-lg hover:bg-green-900 hover:text-white'
+                onClick={pageReload}
+              >
+                검색
+              </button>
             </div>
-            <button
-              className='w-20 m-3 bg-green-400 rounded-lg hover:bg-green-900 hover:text-white'
-              onClick={pageReload}
-            >
-              검색
-            </button>
-          </div>
+          ) : (
+            <div className=''></div>
+          )}
 
           <div className='flex items-center'>
             {onCreate !== undefined ? (

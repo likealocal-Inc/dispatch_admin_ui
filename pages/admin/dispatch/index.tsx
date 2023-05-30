@@ -159,6 +159,7 @@ export default function Orders() {
             message={message!}
             setMessage={setMessage}
             onCreate={onCreateOpen}
+            isShowSearch={true}
           />
 
           {openModal ? (

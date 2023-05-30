@@ -129,14 +129,6 @@ export default function Users() {
     <>
       <AdminLayout menuTitle={"업체 관리"}>
         <div className='h-screen p-5 bg-gray-500'>
-          <div className='flex items-center justify-end p-2'>
-            <button
-              className='w-24 h-10 mr-2 font-bold text-white rounded-lg bg-slate-800 hover:bg-amber-300 hover:text-red-700'
-              onClick={() => handleCreateModalOpen()}
-            >
-              생성
-            </button>
-          </div>
           <TableTemplate
             title='사용자 관리'
             headers={headers}
@@ -147,6 +139,7 @@ export default function Users() {
             message={message!}
             setMessage={setMessage}
             onCreate={handleCreateModalOpen}
+            isShowSearch={false}
           />
 
           <ManageCompanyModal
