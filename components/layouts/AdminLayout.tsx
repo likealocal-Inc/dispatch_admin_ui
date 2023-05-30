@@ -1,5 +1,4 @@
 import Sidebar from "@components/Sidebar";
-import { Loading } from "@components/loading/Loading";
 import { PageURLs } from "@libs/client/constants";
 import { checkToken } from "@libs/client/utils/auth.utils";
 import Head from "next/head";

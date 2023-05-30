@@ -11,9 +11,7 @@ const nextConfig = {
     LOCALSTORAGE_KEY: process.env.LOCALSTORAGE_KEY,
   },
 
-  images: {
-    domains: ["images.unsplash.com"],
-  },
+  images: {},
 };
 
 module.exports = nextConfig;

@@ -75,13 +75,12 @@ export default function TableTemplate({
         <div className='bg-gray-500'>
           {onCreate && (
             <div className='flex justify-end pt-2 pb-1 pr-2'>
-              <Button
-                variant='contained'
-                className='w-24 mr-2 font-bold text-black bg-slate-300 hover:bg-amber-300 hover:text-black'
+              <button
+                className='w-24 p-2 mr-2 font-bold text-white rounded-lg bg-slate-800 hover:bg-amber-300 hover:text-red-700'
                 onClick={() => onCreate()}
               >
                 생성
-              </Button>
+              </button>
             </div>
           )}
           <div className='flex flex-col'>

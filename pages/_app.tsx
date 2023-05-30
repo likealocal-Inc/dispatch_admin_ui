@@ -1,8 +1,8 @@
 import type { AppProps } from "next/app";
 import { SWRConfig } from "swr";
 
+import "../styles/fonts.css";
 import "../styles/globals.css";
-import "../styles/tailwind.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   // 인증여부 확인

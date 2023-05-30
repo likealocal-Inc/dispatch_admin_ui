@@ -1,13 +1,23 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require("tailwindcss/defaultTheme");
-const themeBase = require("./themes/themeBase.json");
-const themeSet = themeBase.global;
+const { join } = require("path");
 
 module.exports = {
+  mode: "jit",
   content: [
     "./pages/**/*.{js,jsx,ts,tsx}",
     "./components/**/*.{js,jsx,ts,tsx}",
     "./libs/**/*.{js,jsx,ts,tsx}",
-    "./node_modules/tw-elements/dist/js/*.js",
+    "./public/**/*.{html,ico,svg}",
   ],
+  corePlugins: {
+    preflight: false,
+  },
+  important: "body",
+  theme: {
+    extend: {},
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
 };
