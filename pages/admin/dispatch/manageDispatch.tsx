@@ -346,12 +346,12 @@ export default function ManageDispatchModal({
                     <Card className='p-6'>
                       <div className='flex flex-row'>
                         <div className='flex flex-col p-3'>
-                          <div className='flex flex-row items-center w-72'>
+                          <div className='flex flex-row items-center w-96'>
                             <div className='text-sm w-28'>상품구분</div>
                             {uiType === UIType.DISPATCH || order?.isIamweb ? (
                               <div className='flex items-center justify-center w-full h-full m-2 rounded-lg bg-slate-300'>
                                 <div className='px-2 text-xs'>
-                                  {order!.orderTitle}{" "}
+                                  {order!.orderTitle}
                                 </div>
                               </div>
                             ) : (

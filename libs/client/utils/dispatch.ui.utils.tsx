@@ -33,7 +33,7 @@ export function InfoBox({ info }: any) {
 }
 export function InfoBoxWithTitle({ title, info }: any) {
   return (
-    <div className='flex flex-row items-center my-1'>
+    <div className='flex flex-row items-center my-1 w-96'>
       <div className='text-sm w-28'>{title}</div>
       <InfoBox info={info} />
     </div>
