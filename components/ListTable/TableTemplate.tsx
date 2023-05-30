@@ -136,6 +136,7 @@ export default function TableTemplate({
             call={call}
             size={pageSize}
             totalCount={totalCount}
+            condition={condition}
           />
         </div>
       </div>

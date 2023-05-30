@@ -6,6 +6,7 @@ interface PaginavigationProps {
   call: Function;
   size: number;
   totalCount: number;
+  condition?: any;
 }
 
 export default function PaginavigationWidget({
@@ -14,6 +15,7 @@ export default function PaginavigationWidget({
   call,
   size,
   totalCount,
+  condition = {},
 }: PaginavigationProps) {
   // 페이지 숫자 출력 개수 리미트
   const pageLimit = 10;
@@ -33,6 +35,7 @@ export default function PaginavigationWidget({
     await call({
       size,
       page: movePage,
+      condition,
     });
   };
   useEffect(() => {}, []);
