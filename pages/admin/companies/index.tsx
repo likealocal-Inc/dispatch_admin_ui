@@ -98,7 +98,7 @@ export default function Users() {
                         }
 
                         setMessage({
-                          message: `업체 활성화: CompanyID:[${d.id}] ${
+                          message: `업체 활성화: Company Name:[${d.name}] ${
                             d.isActive ? "활성화" : "비활성화"
                           }`,
                           type: "S",

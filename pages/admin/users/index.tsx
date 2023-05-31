@@ -115,7 +115,7 @@ export default function Users() {
                         }
 
                         setMessage({
-                          message: `사용자 활성화: UserID:[${d.id}] ${
+                          message: `사용자 활성화: UserID:[${d.email}] ${
                             d.isActive ? "활성화" : "비활성화"
                           }`,
                           type: "S",

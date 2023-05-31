@@ -284,7 +284,7 @@ export function SelectBoxCompanyList({
 
   return (
     <select
-      className='w-32 rounded-lg'
+      className='w-full rounded-lg'
       id={id}
       required={required}
       onChange={(e) => {
