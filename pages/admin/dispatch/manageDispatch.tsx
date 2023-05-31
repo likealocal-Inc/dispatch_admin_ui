@@ -6,6 +6,7 @@ import {
   Fade,
   Modal,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import useCallAPI from "../../../libs/client/hooks/useCallAPI";
@@ -23,6 +24,7 @@ import { UserModel } from "@libs/client/models/user.model";
 import {
   BoardingDateComponent,
   DispatchProcessInfo,
+  IamWebTimeOrderInputBox,
   InfoBoxWithTitle,
   InfomationComponent,
   LocationAndAddress,
@@ -90,6 +92,7 @@ export default function ManageDispatchModal({
   const [me, setMe] = useState<UserModel>();
   const [isModify, setIsModify] = useState(true);
 
+  const [iamwebTimeOrderInfo, setIamwebTimeOrderInfo] = useState(undefined);
   // 주소관련
   const [isStartAddressSearchShow, setIsStartAddressSearchShow] =
     useState(false);
@@ -165,106 +168,148 @@ export default function ManageDispatchModal({
     const me = ElseUtils.getUserFromLocalStorage();
     //me.then((d) => setMe(d.data));
     setMe(me);
-    console.log(me);
     setIsModify(me.role !== "USER");
+
+    const else01 = order?.else01;
+    let else01Json = undefined;
+    if (else01 !== undefined && else01 !== "") {
+      // console.log(else01);
+      else01Json = JSON.parse(else01);
+      setIamwebTimeOrderInfo(else01Json);
+    }
   }, [open]);
 
   const onSubmitDispatch = () => {
-    const carCompany = getHTMLElementByID<HTMLInputElement>("carCompany").value;
-    const jiniName = getHTMLElementByID<HTMLInputElement>("jiniName").value;
-    const carInfo = getHTMLElementByID<HTMLInputElement>("carInfo").value;
-    const jiniPhone = getHTMLElementByID<HTMLInputElement>("jiniPhone").value;
-    const _baseFare = getHTMLElementByID<HTMLInputElement>("baseFare").value;
-    const _addFare = getHTMLElementByID<HTMLInputElement>("addFare").value;
-    const _totalFare = getHTMLElementByID<HTMLInputElement>("totalFare").value;
-
     const dispatchStatus = getSelctOptionValue("dispatchStatus");
 
-    const baseFare = _baseFare === "" ? 0 : +_baseFare;
-    const addFare = _baseFare === "" ? 0 : +_addFare;
-    const totalFare = _baseFare === "" ? 0 : +_totalFare;
-    if (
-      carCompany === "" ||
-      jiniName === "" ||
-      carInfo === "" ||
-      jiniPhone === ""
-    ) {
-      setMessage("모든 데이터를 입력해주세요");
+    // 배차 완료가 아닐경우는 데이터 확인이 필요 없음
+    if (dispatchStatus !== EnumDispatchStatus.DISPATCH_COMPLETE) {
+      onStatusUpdate(dispatchStatus);
     } else {
-      call({
-        carCompany,
-        jiniName,
-        carInfo,
-        jiniPhone,
-        baseFare,
-        addFare,
-        totalFare,
-        else01: "",
-        else02: "",
-        else03: "",
-        orderId: dispatch ? dispatch.orderId : order!.id,
-        dispatchStatus: dispatchStatus === order!.status ? "" : dispatchStatus,
-      });
+      const carCompany =
+        getHTMLElementByID<HTMLInputElement>("carCompany").value;
+      const jiniName = getHTMLElementByID<HTMLInputElement>("jiniName").value;
+      const carInfo = getHTMLElementByID<HTMLInputElement>("carInfo").value;
+      const jiniPhone = getHTMLElementByID<HTMLInputElement>("jiniPhone").value;
+      const _baseFare = getHTMLElementByID<HTMLInputElement>("baseFare").value;
+      const _addFare = getHTMLElementByID<HTMLInputElement>("addFare").value;
+      const _totalFare =
+        getHTMLElementByID<HTMLInputElement>("totalFare").value;
+
+      const baseFare = _baseFare === "" ? 0 : +_baseFare;
+      const addFare = _baseFare === "" ? 0 : +_addFare;
+      const totalFare = _baseFare === "" ? 0 : +_totalFare;
+      if (
+        carCompany === "" ||
+        jiniName === "" ||
+        carInfo === "" ||
+        jiniPhone === ""
+      ) {
+        setMessage("모든 데이터를 입력해주세요");
+      } else {
+        call({
+          carCompany,
+          jiniName,
+          carInfo,
+          jiniPhone,
+          baseFare,
+          addFare,
+          totalFare,
+          else01: "",
+          else02: "",
+          else03: "",
+          orderId: dispatch ? dispatch.orderId : order!.id,
+          dispatchStatus:
+            dispatchStatus === order!.status ? "" : dispatchStatus,
+        });
+      }
     }
   };
 
   // 수정, 생성 처리
   const onSubmit = () => {
     let orderTitle;
+
+    // 아임웹 시간대절상품일 경우 처리
+    let else01Json = "";
     if (order?.isIamweb) {
       orderTitle = order.orderTitle;
+
+      // 시간대절 데이터
+      const startGoal =
+        getHTMLElementByID<HTMLInputElement>("start_goal").value;
+      const tripRoute =
+        getHTMLElementByID<HTMLInputElement>("trip_route").value;
+      const timezon = getHTMLElementByID<HTMLInputElement>("timezon").value;
+      else01Json = `{"start_goal":"${startGoal}" , "trip_route":"${tripRoute}" , "timezon":"${timezon}"}`;
     } else {
       const titleObj = getHTMLElementByID<HTMLSelectElement>("orderTitle");
       orderTitle = titleObj.options[titleObj.selectedIndex].value;
     }
 
     const boardingDate = startDate;
-
-    const startInfo = getAddress(
-      selectType,
-      orderTypeList[0],
-      "startLocation",
-      startAddress
-    );
-    const goalInfo = getAddress(
-      selectType,
-      orderTypeList[1],
-      "goalLocation",
-      goalAddress
-    );
-
     let information = getHTMLElementByID<HTMLInputElement>("infomation").value;
 
-    if (
-      orderTitle === "" ||
-      boardingDate === null ||
-      startInfo.location === "" ||
-      goalInfo.location === "" ||
-      startInfo.address === "" ||
-      goalInfo.address === "" ||
-      information === ""
-    ) {
-      setMessage("모든 데이터를 입력해주세요");
+    let startInfo;
+    let goalInfo;
+
+    if (else01Json === "") {
+      startInfo = getAddress(
+        selectType,
+        orderTypeList[0],
+        "startLocation",
+        startAddress
+      );
+      goalInfo = getAddress(
+        selectType,
+        orderTypeList[1],
+        "goalLocation",
+        goalAddress
+      );
+
+      if (
+        orderTitle === "" ||
+        boardingDate === null ||
+        startInfo.location === "" ||
+        goalInfo.location === "" ||
+        startInfo.address === "" ||
+        goalInfo.address === "" ||
+        information === ""
+      ) {
+        setMessage("모든 데이터를 입력해주세요");
+      } else {
+        call({
+          orderTitle,
+          boardingDate,
+          startLocation: startInfo.location,
+          startAddress: startInfo.address,
+          goalLocation: goalInfo.location,
+          goalAddress: goalInfo.address,
+          information,
+          else01: "",
+          else02: "",
+        });
+      }
     } else {
-      call({
-        orderTitle,
-        boardingDate,
-        startLocation: startInfo.location,
-        startAddress: startInfo.address,
-        goalLocation: goalInfo.location,
-        goalAddress: goalInfo.address,
-        information,
-        else01: "",
-        else02: "",
-      });
+      if (orderTitle === "" || boardingDate === null || information === "") {
+        setMessage("모든 데이터를 입력해주세요");
+      } else {
+        call({
+          orderTitle,
+          boardingDate,
+          information,
+          else01: else01Json,
+          else02: "",
+        });
+      }
     }
   };
 
   // 상태값 변경
-  const onStatusUpdate = () => {
+  const onStatusUpdate = (status: string) => {
     callAPI({
       urlInfo: APIURLs.ORDER_STATUS_UPDATE,
-      addUrlParams: `/${order!.id}`,
+      addUrlParams: `/${order!.id}/${status}`,
     })
       .then((d) => d.json())
       .then((d) => {
@@ -334,7 +379,9 @@ export default function ManageDispatchModal({
                         <Button
                           variant='contained'
                           className='mr-2 font-bold text-black bg-green-500 w-44'
-                          onClick={onStatusUpdate}
+                          onClick={() =>
+                            onStatusUpdate(EnumDispatchStatus.DISPATCH_REQUEST)
+                          }
                         >
                           배차요청
                         </Button>
@@ -399,55 +446,93 @@ export default function ManageDispatchModal({
                               setStartDate={setStartDate}
                             />
                           )}
-                          {uiType === UIType.DISPATCH ? (
+
+                          {iamwebTimeOrderInfo === undefined ? (
+                            <>
+                              {uiType === UIType.DISPATCH ? (
+                                <>
+                                  <InfoBoxWithTitle
+                                    title='출발지명'
+                                    info={order?.startLocation}
+                                  />
+                                  <InfoBoxWithTitle
+                                    title='출발지주소'
+                                    info={order?.startAddress}
+                                  />
+                                </>
+                              ) : (
+                                <LocationAndAddress
+                                  title={"출발지"}
+                                  selectType={selectType}
+                                  orderType={orderTypeList[0]}
+                                  uiType={uiType}
+                                  address={startAddress}
+                                  setIsAddressSearchShow={
+                                    setIsStartAddressSearchShow
+                                  }
+                                  locationStr={"startLocation"}
+                                  locationObj={order?.startLocation}
+                                />
+                              )}
+                              {uiType === UIType.DISPATCH ? (
+                                <>
+                                  <InfoBoxWithTitle
+                                    title='도착지'
+                                    info={order?.goalLocation}
+                                  />
+                                  <InfoBoxWithTitle
+                                    title='도착지주소'
+                                    info={order?.goalAddress}
+                                  />
+                                </>
+                              ) : (
+                                <LocationAndAddress
+                                  title={"도착지"}
+                                  selectType={selectType}
+                                  orderType={orderTypeList[1]}
+                                  uiType={uiType}
+                                  address={goalAddress}
+                                  setIsAddressSearchShow={
+                                    setIsGoalAddressSearchShow
+                                  }
+                                  locationStr={"goalLocation"}
+                                  locationObj={order?.goalLocation}
+                                />
+                              )}
+                            </>
+                          ) : uiType === UIType.DISPATCH ? (
                             <>
                               <InfoBoxWithTitle
-                                title='출발지'
-                                info={order?.startLocation}
+                                title='출발지/도착지'
+                                info={iamwebTimeOrderInfo["start_goal"]}
                               />
                               <InfoBoxWithTitle
-                                title='출발지주소'
-                                info={order?.startAddress}
+                                title='여행루트'
+                                info={iamwebTimeOrderInfo["trip_route"]}
+                              />
+                              <InfoBoxWithTitle
+                                title='시간대절'
+                                info={iamwebTimeOrderInfo["timezon"]}
                               />
                             </>
                           ) : (
-                            <LocationAndAddress
-                              title={"출발지"}
-                              selectType={selectType}
-                              orderType={orderTypeList[0]}
-                              uiType={uiType}
-                              address={startAddress}
-                              setIsAddressSearchShow={
-                                setIsStartAddressSearchShow
-                              }
-                              locationStr={"startLocation"}
-                              locationObj={order?.startLocation}
-                            />
-                          )}
-                          {uiType === UIType.DISPATCH ? (
                             <>
-                              <InfoBoxWithTitle
-                                title='도착지'
-                                info={order?.goalLocation}
+                              <IamWebTimeOrderInputBox
+                                id='start_goal'
+                                title='출발지/도착지'
+                                value={iamwebTimeOrderInfo["start_goal"]}
                               />
-                              <InfoBoxWithTitle
-                                title='도착지주소'
-                                info={order?.goalAddress}
+                              <IamWebTimeOrderInputBox
+                                id='trip_route'
+                                title='여행루트'
+                                value={iamwebTimeOrderInfo["trip_route"]}
+                              />
+                              <IamWebTimeOrderInputBox
+                                id='timezon'
+                                title='시간대절'
+                                value={iamwebTimeOrderInfo["timezon"]}
                               />
                             </>
-                          ) : (
-                            <LocationAndAddress
-                              title={"도착지"}
-                              selectType={selectType}
-                              orderType={orderTypeList[1]}
-                              uiType={uiType}
-                              address={goalAddress}
-                              setIsAddressSearchShow={
-                                setIsGoalAddressSearchShow
-                              }
-                              locationStr={"goalLocation"}
-                              locationObj={order?.goalLocation}
-                            />
                           )}
                         </div>
                       </div>

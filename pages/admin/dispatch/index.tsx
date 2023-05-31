@@ -82,6 +82,12 @@ export default function Orders() {
     return (
       res &&
       res.map((d, key) => {
+        const else01 = d.else01;
+        let else01Json = undefined;
+        if (else01 !== "") {
+          // console.log(else01);
+          else01Json = JSON.parse(else01);
+        }
         return (
           <StyledTableRow
             key={key}
@@ -145,12 +151,42 @@ export default function Orders() {
             ></StyledTableCell>
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center'>
-                {d.startLocation === "" ? d.startAirport : d.startLocation}
+                {else01Json === undefined ? (
+                  d.startLocation === "" ? (
+                    d.startAirport
+                  ) : (
+                    d.startLocation
+                  )
+                ) : (
+                  <div className='flex flex-col justify-center text-center'>
+                    <div className='font-bold'>[시간대절]출발지/도착지</div>
+                    <div className='font-bold text-red-600'>
+                      {else01Json.start_goal}
+                    </div>
+                    <div className='font-bold'>[시간대절]여행루트</div>
+                    <div className='font-bold text-red-600'>
+                      {else01Json.trip_route}
+                    </div>
+                  </div>
+                )}
               </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center'>
-                {d.goalLocation === "" ? d.goalAirport : d.goalLocation}
+                {else01Json === undefined ? (
+                  d.goalLocation === "" ? (
+                    d.goalAirport
+                  ) : (
+                    d.goalLocation
+                  )
+                ) : (
+                  <div className='flex flex-col justify-center text-center'>
+                    <div className='font-bold'>[시간대절]시간대절</div>
+                    <div className='font-bold text-red-600'>
+                      {else01Json.timezon}
+                    </div>
+                  </div>
+                )}
               </div>
             </StyledTableCell>
             {user?.role !== "USER" ? (

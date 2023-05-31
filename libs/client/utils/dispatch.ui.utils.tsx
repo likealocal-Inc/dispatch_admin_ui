@@ -199,9 +199,10 @@ export function InfomationComponent({ uiType, information, isIamweb }: any) {
             ) : (
               <TextField
                 id='infomation'
-                defaultValue={uiType === UIType.MODIFY ? infos : ""}
+                defaultValue={uiType === UIType.MODIFY ? infos : "국적:\n이름:"}
                 className='w-full text-sm'
                 multiline
+                placeholder='여기에 추가 정보를 넣어 주세요 &&'
                 rows={5}
               />
             )
@@ -358,5 +359,18 @@ export function SelectBoxStatusList({
         );
       })}
     </select>
+  );
+}
+
+export function IamWebTimeOrderInputBox({ title, id, value }: any) {
+  return (
+    <>
+      <div className='flex flex-row items-center w-96'>
+        <div className='text-sm w-28'>{title}</div>
+        <div className='w-full m-1'>
+          <TextField id={id} defaultValue={value} className='w-full' />
+        </div>
+      </div>
+    </>
   );
 }
