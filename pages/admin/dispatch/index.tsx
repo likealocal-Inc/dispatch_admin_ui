@@ -74,11 +74,18 @@ export default function Orders() {
           <StyledTableRow
             key={key}
             className={`transition duration-300 ease-in-out border-b hover:bg-gray-300`}
-            onDoubleClick={() => onModifyOpen(d)}
           >
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center font-bold text-red-600'>
-                {DispatchUtils.getStatusString(d.status)}
+                <div className='flex justify-center'>
+                  <button
+                    onClick={() => onModifyOpen(d)}
+                    type='button'
+                    className='inline-block px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out w-full'
+                  >
+                    {DispatchUtils.getStatusString(d.status)}
+                  </button>
+                </div>
               </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
@@ -89,7 +96,7 @@ export default function Orders() {
             <StyledTableCell
               component='th'
               scope='row'
-              className='flex justify-center'
+              className=''
               dangerouslySetInnerHTML={{
                 __html: DateUtils.stringToDate(d.orderTime),
               }}
@@ -113,7 +120,7 @@ export default function Orders() {
             <StyledTableCell
               component='th'
               scope='row'
-              className='flex justify-center'
+              className=''
               dangerouslySetInnerHTML={{
                 __html: `${DateUtils.iso8601DateToString(d.boardingDate)}`,
               }}

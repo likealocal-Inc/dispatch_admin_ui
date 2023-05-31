@@ -3,7 +3,7 @@ import { Paper, Table, TableBody, TableContainer } from "@mui/material";
 
 import useCallAPI from "@libs/client/hooks/useCallAPI";
 import { UseAPICallResult } from "@libs/client/hooks/useCallAPI";
-import { APIURLType, APIURLs } from "@libs/client/constants";
+import { APIURLType, APIURLs, localstorageObj } from "@libs/client/constants";
 import PaginavigationWidget from "@components/ListTable/Paginavigation";
 import TableHeader from "@components/ListTable/TableHeader";
 import { MessageProps, MessageShow } from "@components/MessageShow/show";
@@ -12,6 +12,7 @@ import {
   SelectBoxCompanyList,
   SelectBoxStatusList,
 } from "@libs/client/utils/dispatch.ui.utils";
+import { UserModel } from "@libs/client/models/user.model";
 
 interface TableTemplatProps {
   pageSize?: number;
@@ -48,6 +49,8 @@ export default function TableTemplate({
     url: listCallUrl,
   });
 
+  // 사용자 정보
+  const [user, setUser] = useState<UserModel>();
   /**
    * 데이터 변경이 있을경우 현재 페이지 재로딩
    */
@@ -61,6 +64,20 @@ export default function TableTemplate({
 
   useEffect(() => {
     pageReload();
+
+    setTimeout(() => {
+      const userObj: string = localStorage.getItem(
+        localstorageObj.key.userKey
+      )!;
+      const _user = JSON.parse(userObj);
+      setUser(_user);
+
+      if (_user?.role !== "USER") {
+        const showCompany = document.getElementById("showCompany");
+        console.log(showCompany);
+        if (showCompany !== null) showCompany!.style.display = "block";
+      }
+    }, 300);
   }, []);
 
   useEffect(() => {
@@ -78,24 +95,35 @@ export default function TableTemplate({
       <div className='bg-gray-500'>
         <div className='flex justify-between pt-2 pb-1 pr-2'>
           {isShowSearch ? (
-            <div className='flex flex-row'>
-              <div className='flex flex-row items-center w-auto pl-10'>
-                <div className='font-bold text-white w-52'>배차상태:</div>
-                <SelectBoxStatusList
-                  id='searchStatus'
-                  isSearch={true}
-                  onChange={(e: string) => {
-                    setCondition({ ...condition, status: e });
-                  }}
-                />
-                <div className='w-32 font-bold text-white'>업체:</div>
-                <SelectBoxCompanyList
-                  id='searchCompany'
-                  isSearch={true}
-                  onChange={(e: string) => {
-                    setCondition({ ...condition, company: e });
-                  }}
-                />
+            <div className='flex flex-row w-full'>
+              <div className='flex flex-row items-center justify-start pl-10'>
+                <div className='flex flex-row items-center justify-start w-64 pl-10'>
+                  <div className='font-bold text-white w-44'>배차상태:</div>
+                  <div className=''>
+                    <SelectBoxStatusList
+                      id='searchStatus'
+                      isSearch={true}
+                      onChange={(e: string) => {
+                        setCondition({ ...condition, status: e });
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className='hidden' id='showCompany'>
+                  <div className='flex flex-row items-center w-64 pl-10'>
+                    <div className='w-12 font-bold text-white'>업체:</div>
+                    <div className=''>
+                      <SelectBoxCompanyList
+                        id='searchCompany'
+                        isSearch={true}
+                        onChange={(e: string) => {
+                          setCondition({ ...condition, company: e });
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               <button
                 className='w-20 m-3 bg-green-400 rounded-lg hover:bg-green-900 hover:text-white'

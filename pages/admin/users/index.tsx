@@ -48,7 +48,7 @@ export default function Users() {
     "활성화",
     "삭제",
   ];
-  const headerWidths = [10, 20, 20, 20, 20, 10, 10, 10];
+  const headerWidths = [10, 10, 20, 20, 20, 5, 5, 20];
   const body = (res: UserModel[]) => {
     return (
       res &&
@@ -59,8 +59,14 @@ export default function Users() {
             className='transition duration-300 ease-in-out border-b hover:bg-gray-300'
           >
             <StyledTableCell component='th' scope='row'>
-              <div className='flex justify-center'>
-                <Button02 onClick={() => onOpenModify(d)} label={d.email} />
+              <div className='flex justify-center '>
+                <button
+                  onClick={() => onOpenModify(d)}
+                  type='button'
+                  className='inline-block px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out w-full'
+                >
+                  {d.email}
+                </button>
               </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>

@@ -1,5 +1,7 @@
 import Sidebar from "@components/Sidebar";
-import { PageURLs } from "@libs/client/constants";
+import { callAPI } from "@libs/client/call/call";
+import { APIURLs, PageURLs, localstorageObj } from "@libs/client/constants";
+import { UserModel } from "@libs/client/models/user.model";
 import { checkToken } from "@libs/client/utils/auth.utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -12,6 +14,7 @@ interface AdminProps {
 const AdminLayout = ({ menuTitle, children }: AdminProps) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<UserModel>();
   useEffect(() => {
     checkToken().then((d) => {
       if (d.ok === false) {
@@ -20,6 +23,18 @@ const AdminLayout = ({ menuTitle, children }: AdminProps) => {
     });
   });
 
+  useEffect(() => {
+    callAPI({ urlInfo: APIURLs.ME })
+      .then((d) => d.json())
+      .then((d) => {
+        setUser(d.data);
+        localStorage.setItem(
+          localstorageObj.key.userKey,
+          JSON.stringify(d.data)
+        );
+      });
+  }, []);
+
   return (
     <>
       <Head>
@@ -27,7 +42,7 @@ const AdminLayout = ({ menuTitle, children }: AdminProps) => {
       </Head>
       <>
         <div className=''>
-          <Sidebar />
+          <Sidebar userModel={user} />
           {<div className='ml-44'>{children}</div>}
         </div>
       </>

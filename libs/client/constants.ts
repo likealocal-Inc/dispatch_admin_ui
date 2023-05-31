@@ -11,6 +11,7 @@ const SERVER = `${PROTOCAL}://${IP}:${PORT}`;
 // API URL 생성하기
 const makeAPIURL = (path: string) => `${SERVER}/api/${path}`;
 
+export const localstorageObj = { key: { userKey: "u@k#1z2s3f9djf#4*jnd" } };
 export enum METHOD {
   POST = "POST",
   GET = "GET",

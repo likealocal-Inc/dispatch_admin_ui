@@ -284,7 +284,7 @@ export function SelectBoxCompanyList({
 
   return (
     <select
-      className='w-full rounded-lg'
+      className='w-32 rounded-lg'
       id={id}
       required={required}
       onChange={(e) => {
@@ -323,7 +323,7 @@ export function SelectBoxStatusList({
 }: any) {
   return (
     <select
-      className='w-full m-3 rounded-lg'
+      className='w-32 m-3 rounded-lg'
       id={id}
       onChange={(e) => {
         onChange(e.target.value);
