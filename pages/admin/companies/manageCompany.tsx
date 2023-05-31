@@ -13,7 +13,7 @@ import {
 import useCallAPI from "../../../libs/client/hooks/useCallAPI";
 import { UseAPICallResult } from "../../../libs/client/hooks/useCallAPI";
 import { APIURLs } from "@libs/client/constants";
-import { getHTMLElementByID } from "../../../libs/client/utils/html";
+import { getHTMLElementByID } from "../../../libs/client/utils/html.utils";
 import { useEffect, useState } from "react";
 import { CompanyModel } from "@libs/client/models/company.model";
 

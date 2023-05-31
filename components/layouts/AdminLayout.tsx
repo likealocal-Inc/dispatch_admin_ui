@@ -1,11 +1,16 @@
+import Head from "next/head";
+import { useRouter } from "next/router";
+import CryptoJS from "crypto-js";
+
 import Sidebar from "@components/Sidebar";
 import { callAPI } from "@libs/client/call/call";
 import { APIURLs, PageURLs, localstorageObj } from "@libs/client/constants";
 import { UserModel } from "@libs/client/models/user.model";
 import { checkToken } from "@libs/client/utils/auth.utils";
-import Head from "next/head";
-import { useRouter } from "next/router";
+
 import { useEffect, useState } from "react";
+import { SecurityUtils } from "@libs/client/utils/security.utils";
+import { ElseUtils } from "@libs/client/utils/else.utils";
 
 interface AdminProps {
   children?: any;
@@ -24,15 +29,11 @@ const AdminLayout = ({ menuTitle, children }: AdminProps) => {
   });
 
   useEffect(() => {
-    callAPI({ urlInfo: APIURLs.ME })
-      .then((d) => d.json())
-      .then((d) => {
-        setUser(d.data);
-        localStorage.setItem(
-          localstorageObj.key.userKey,
-          JSON.stringify(d.data)
-        );
-      });
+    setLoading(true);
+    ElseUtils.setUserInLocalStorage().then((d: any) => {
+      setUser(d);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -42,8 +43,14 @@ const AdminLayout = ({ menuTitle, children }: AdminProps) => {
       </Head>
       <>
         <div className=''>
-          <Sidebar userModel={user} />
-          {<div className='ml-44'>{children}</div>}
+          {loading ? (
+            ""
+          ) : (
+            <>
+              <Sidebar />
+              <div className='ml-44'>{children}</div>
+            </>
+          )}
         </div>
       </>
     </>

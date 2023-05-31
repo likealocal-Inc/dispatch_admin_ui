@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { APIURLs } from "@libs/client/constants";
-import { getHTMLElementByID } from "@libs/client/utils/html";
+import { getHTMLElementByID } from "@libs/client/utils/html.utils";
 import { StyledTableCell, StyledTableRow } from "@libs/client/ui/table";
 import { callAPI } from "@libs/client/call/call";
 import { MessageProps } from "@components/MessageShow/show";
@@ -62,11 +62,7 @@ export default function Users() {
                 </button>
               </div>
             </StyledTableCell>
-            <StyledTableCell
-              component='th'
-              scope='row'
-              className='flex justify-center'
-            >
+            <StyledTableCell component='th' scope='row' className='r'>
               <div className='flex justify-center'>{d.created.toString()}</div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row' className='text-center'>

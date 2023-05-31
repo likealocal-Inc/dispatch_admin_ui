@@ -5,13 +5,14 @@ import ButtonNoBorder from "./buttons/ButtonNoBorder";
 import useCallAPI, { UseAPICallResult } from "@libs/client/hooks/useCallAPI";
 import { APIURLs, PageURLs, localstorageObj } from "@libs/client/constants";
 import { UserModel } from "@libs/client/models/user.model";
+import { ElseUtils } from "@libs/client/utils/else.utils";
 
 interface MenuLiProps {
   label: string;
   url: string;
 }
 
-export default function Sidebar({ userModel }: any) {
+export default function Sidebar() {
   const router = useRouter();
 
   const [user, setUser] = useState<UserModel>();
@@ -21,8 +22,8 @@ export default function Sidebar({ userModel }: any) {
   });
 
   useEffect(() => {
-    setUser(userModel);
-  }, [userModel]);
+    setUser(ElseUtils.getUserFromLocalStorage());
+  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -55,14 +56,16 @@ export default function Sidebar({ userModel }: any) {
     <>
       <nav className='fixed top-0 bottom-0 left-0 z-10 flex-row items-center justify-between block px-6 py-4 overflow-hidden overflow-y-auto shadow-xl bg-blueGray-800 w-44 flex-nowrap'>
         <div className='flex flex-col justify-between w-full min-h-full px-0 mx-auto flex-nowrap'>
-          <div className='p-4 px-0 pb-2 mr-0 text-2xl font-bold text-center text-gray-400 uppercase whitespace-nowrap'>
+          <div className='p-4 px-0 pb-2 mr-0 text-2xl font-bold text-center text-gray-400 whitespace-nowrap'>
             메뉴
-            <br />{" "}
+            <br />
             <div className='text-xs'>
               [{user?.company}.{user?.role}]
+              <br />
+              {user?.email}
             </div>
           </div>
-          <div className='relative top-0 left-0 right-0 flex flex-col flex-1 h-auto mt-4 overflow-x-hidden overflow-y-auto rounded shadow shadow-none opacity-100 '>
+          <div className='relative top-0 left-0 right-0 flex flex-col flex-1 h-auto mt-4 overflow-x-hidden overflow-y-auto rounded shadow opacity-100 '>
             <hr className='min-w-full my-2' />
             <ul className='flex flex-col min-w-full list-none'>
               {/* {menuLi({ label: "대쉬보드", url: "/admin/dashboard" })} */}

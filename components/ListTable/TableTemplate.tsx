@@ -13,6 +13,8 @@ import {
   SelectBoxStatusList,
 } from "@libs/client/utils/dispatch.ui.utils";
 import { UserModel } from "@libs/client/models/user.model";
+import { SecurityUtils } from "@libs/client/utils/security.utils";
+import { ElseUtils } from "@libs/client/utils/else.utils";
 
 interface TableTemplatProps {
   pageSize?: number;
@@ -59,6 +61,7 @@ export default function TableTemplate({
       size: pageSize,
       page,
       condition,
+      isAllList: true,
     });
   };
 
@@ -66,15 +69,11 @@ export default function TableTemplate({
     pageReload();
 
     setTimeout(() => {
-      const userObj: string = localStorage.getItem(
-        localstorageObj.key.userKey
-      )!;
-      const _user = JSON.parse(userObj);
-      setUser(_user);
+      const _user = ElseUtils.getUserFromLocalStorage();
 
+      // B2B업체가 아니라면 회사검색을 활성화한다.
       if (_user?.role !== "USER") {
         const showCompany = document.getElementById("showCompany");
-        console.log(showCompany);
         if (showCompany !== null) showCompany!.style.display = "block";
       }
     }, 300);
@@ -96,7 +95,7 @@ export default function TableTemplate({
         <div className='flex justify-between pt-2 pb-1 pr-2'>
           {isShowSearch ? (
             <div className='flex flex-row w-full'>
-              <div className='flex flex-row items-center justify-start pl-10'>
+              <div className='flex flex-row items-center justify-start'>
                 <div className='flex flex-row items-center justify-start w-64 pl-10'>
                   <div className='font-bold text-white w-44'>배차상태:</div>
                   <div className=''>
@@ -111,7 +110,7 @@ export default function TableTemplate({
                 </div>
 
                 <div className='hidden' id='showCompany'>
-                  <div className='flex flex-row items-center w-64 pl-10'>
+                  <div className='flex flex-row items-center w-64 pl-5'>
                     <div className='w-12 font-bold text-white'>업체:</div>
                     <div className=''>
                       <SelectBoxCompanyList
@@ -126,7 +125,7 @@ export default function TableTemplate({
                 </div>
               </div>
               <button
-                className='w-20 m-3 bg-green-400 rounded-lg hover:bg-green-900 hover:text-white'
+                className='w-20 m-3 font-bold bg-green-300 rounded-lg hover:bg-green-800 hover:text-white'
                 onClick={pageReload}
               >
                 검색

@@ -14,7 +14,7 @@ import { APIURLs } from "@libs/client/constants";
 import {
   getHTMLElementByID,
   getSelctOptionValue,
-} from "../../../libs/client/utils/html";
+} from "../../../libs/client/utils/html.utils";
 import { useEffect, useState } from "react";
 import { callAPI } from "@libs/client/call/call";
 import { OrderModel } from "@libs/client/models/order.model";

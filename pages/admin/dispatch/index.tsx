@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "@mui/material";
 
-import { APIURLs } from "@libs/client/constants";
+import { APIURLs, localstorageObj } from "@libs/client/constants";
 import { StyledTableCell, StyledTableRow } from "@libs/client/ui/table";
 import { MessageProps } from "@components/MessageShow/show";
 import TableTemplate from "@components/ListTable/TableTemplate";
 import { DateUtils } from "@libs/date.utils";
-import { DispatchUtils } from "@libs/client/utils/dispatch.utils";
+import {
+  DispatchUtils,
+  EnumDispatchStatus,
+} from "@libs/client/utils/dispatch.utils";
 import { OrderModel } from "@libs/client/models/order.model";
 import ManageDispatchModal, { UIType } from "./manageDispatch";
-import { Button } from "@mui/material";
 import AdminLayout from "@components/layouts/AdminLayout";
-import {
-  SelectBoxCompanyList,
-  SelectBoxStatusList,
-} from "@libs/client/utils/dispatch.ui.utils";
+import { UserModel } from "@libs/client/models/user.model";
+import { SecurityUtils } from "@libs/client/utils/security.utils";
+import { ElseUtils } from "@libs/client/utils/else.utils";
 
 export default function Orders() {
   // 메세지 출력관련
@@ -26,8 +28,16 @@ export default function Orders() {
 
   const [selectOrder, setSelectOrder] = useState<OrderModel>();
 
+  // 현재 로그인된 사용자
+  const [user, setUser] = useState<UserModel>();
+
   // 모달 관련 설정
   const [openModal, setOpenModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    const cacheUser = ElseUtils.getUserFromLocalStorage();
+    setUser(cacheUser);
+  }, []);
 
   const handleModalClose = (isChange: boolean = false) => {
     setOpenModal(false);
@@ -78,13 +88,19 @@ export default function Orders() {
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center font-bold text-red-600'>
                 <div className='flex justify-center'>
-                  <button
-                    onClick={() => onModifyOpen(d)}
-                    type='button'
-                    className='inline-block px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out w-full'
-                  >
-                    {DispatchUtils.getStatusString(d.status)}
-                  </button>
+                  {user?.role === "ADMIN" ? (
+                    <div className='w-full'>
+                      {DispatchUtils.getStatusString(d.status)}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => onModifyOpen(d)}
+                      type='button'
+                      className='inline-block px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out w-full'
+                    >
+                      {DispatchUtils.getStatusString(d.status)}
+                    </button>
+                  )}
                 </div>
               </div>
             </StyledTableCell>
@@ -137,13 +153,17 @@ export default function Orders() {
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center'>
-                <Button
-                  variant='contained'
-                  className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
-                  onClick={() => onModifyDispatch(d)}
-                >
-                  배차
-                </Button>
+                {d.status === EnumDispatchStatus.IAMWEB_ORDER ? (
+                  <div className='font-bold text-orange-600'>배차요청전</div>
+                ) : (
+                  <Button
+                    variant='contained'
+                    className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
+                    onClick={() => onModifyDispatch(d)}
+                  >
+                    배차
+                  </Button>
+                )}
               </div>
             </StyledTableCell>
           </StyledTableRow>

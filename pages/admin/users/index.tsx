@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { APIURLs } from "@libs/client/constants";
 import { UserModel } from "@libs/client/models/user.model";
-import { getHTMLElementByID } from "@libs/client/utils/html";
+import { getHTMLElementByID } from "@libs/client/utils/html.utils";
 import { StyledTableCell, StyledTableRow } from "@libs/client/ui/table";
 import { callAPI } from "@libs/client/call/call";
 import { MessageProps } from "@components/MessageShow/show";
