@@ -240,6 +240,7 @@ export function DispatchProcessInfo({
   value,
   id,
   isNumber = false,
+  isModify = true,
 }: any) {
   const [val, setVal] = useState("");
 
@@ -250,13 +251,19 @@ export function DispatchProcessInfo({
   return (
     <div className='flex flex-row items-center w-72'>
       <div className='w-28'>{title}</div>
-      <div className='w-full m-3'>
-        <input
-          id={id}
-          defaultValue={val}
-          className='w-full p-3 border-dashed rounded-lg '
-          type={isNumber ? "number" : "text"}
-        />
+      <div className='w-full m-1'>
+        {isModify ? (
+          <input
+            id={id}
+            defaultValue={val}
+            className='w-full p-3 border-dashed rounded-lg '
+            type={isNumber ? "number" : "text"}
+          />
+        ) : (
+          <div className='w-full p-2 border-2 border-dashed rounded-lg'>
+            {val}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -323,7 +330,7 @@ export function SelectBoxStatusList({
 }: any) {
   return (
     <select
-      className='w-32 m-3 rounded-lg'
+      className='w-full m-3 rounded-lg'
       id={id}
       onChange={(e) => {
         onChange(e.target.value);

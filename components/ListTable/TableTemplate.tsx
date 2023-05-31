@@ -97,8 +97,8 @@ export default function TableTemplate({
             <div className='flex flex-row w-full'>
               <div className='flex flex-row items-center justify-start'>
                 <div className='flex flex-row items-center justify-start w-64 pl-10'>
-                  <div className='font-bold text-white w-44'>배차상태:</div>
-                  <div className=''>
+                  <div className='w-20 font-bold text-white'>배차상태:</div>
+                  <div className='px-2'>
                     <SelectBoxStatusList
                       id='searchStatus'
                       isSearch={true}

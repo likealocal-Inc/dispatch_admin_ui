@@ -37,6 +37,7 @@ import {
 } from "@libs/client/utils/dispatch.utils";
 import { DispatchModel } from "@libs/client/models/dispatch.model";
 import { DateUtils } from "@libs/date.utils";
+import { ElseUtils } from "@libs/client/utils/else.utils";
 
 export enum UIType {
   CREATE,
@@ -70,9 +71,9 @@ export default function ManageDispatchModal({
         ? APIURLs.ORDER_UPDATE
         : open && uiType === UIType.CREATE
         ? APIURLs.ORDER_CREATE
-        : dispatch
-        ? APIURLs.DISPATCH_UPDATE
-        : APIURLs.DISPATCH_CREATE,
+        : dispatch === undefined || dispatch == null
+        ? APIURLs.DISPATCH_CREATE
+        : APIURLs.DISPATCH_UPDATE,
     addUrlParams:
       open && uiType === UIType.MODIFY
         ? `/${order!.id}`
@@ -87,6 +88,7 @@ export default function ManageDispatchModal({
   const [selectType, setSelectType] = useState(orderTypeList[0]);
 
   const [me, setMe] = useState<UserModel>();
+  const [isModify, setIsModify] = useState(true);
 
   // 주소관련
   const [isStartAddressSearchShow, setIsStartAddressSearchShow] =
@@ -110,7 +112,7 @@ export default function ManageDispatchModal({
   }, [loading]);
 
   // 사용자 정보를 조회해서 화면에 세팅하기
-  const getUserInfo = () => {
+  const getOrderUserInfo = () => {
     const user = callAPI({
       urlInfo: APIURLs.USER_BY_ID,
       addUrlParams: `/${order?.userId}`,
@@ -146,11 +148,11 @@ export default function ManageDispatchModal({
   useEffect(() => {
     // 주문 정보 수정모드
     if (uiType === UIType.MODIFY) {
-      getUserInfo();
+      getOrderUserInfo();
     }
     // 배차관련 정보
     if (uiType === UIType.DISPATCH) {
-      getUserInfo();
+      getOrderUserInfo();
       callAPI({
         urlInfo: APIURLs.DISPATCH_GET_BY_ORDERID,
         addUrlParams: `/${order?.id}`,
@@ -159,10 +161,12 @@ export default function ManageDispatchModal({
         .then((d) => setDispatch(d.data));
     }
     // 생성 - 내 정보만 조회함
-    else {
-      const me = callAPI({ urlInfo: APIURLs.ME }).then((d) => d.json());
-      me.then((d) => setMe(d.data));
-    }
+    // const me = callAPI({ urlInfo: APIURLs.ME }).then((d) => d.json());
+    const me = ElseUtils.getUserFromLocalStorage();
+    //me.then((d) => setMe(d.data));
+    setMe(me);
+    console.log(me);
+    setIsModify(me.role !== "USER");
   }, [open]);
 
   const onSubmitDispatch = () => {
@@ -461,89 +465,100 @@ export default function ManageDispatchModal({
                               title='운수사'
                               id='carCompany'
                               value={dispatch ? dispatch.carCompany : ""}
+                              isModify={isModify}
                             />
                             <DispatchProcessInfo
                               title='지니명'
                               id='jiniName'
                               value={dispatch ? dispatch.jiniName : ""}
+                              isModify={isModify}
                             />
                             <DispatchProcessInfo
                               title='차량정보'
                               id='carInfo'
                               value={dispatch ? dispatch.carInfo : ""}
+                              isModify={isModify}
                             />
                             <DispatchProcessInfo
                               title='연락처'
                               id='jiniPhone'
                               value={dispatch ? dispatch.jiniPhone : ""}
+                              isModify={isModify}
                             />
                             <DispatchProcessInfo
                               title='기본요금'
                               id='baseFare'
                               value={dispatch ? dispatch.baseFare : 0}
                               isNumber={true}
+                              isModify={isModify}
                             />
                             <DispatchProcessInfo
                               title='추가요금'
                               id='addFare'
                               value={dispatch ? dispatch.addFare : 0}
                               isNumber={true}
+                              isModify={isModify}
                             />
                             <DispatchProcessInfo
                               title='요금총합'
                               id='totalFare'
                               value={dispatch ? dispatch.totalFare : 0}
                               isNumber={true}
+                              isModify={isModify}
                             />
                             <div className='flex flex-row items-center w-72'>
                               <div className='w-28'>상태값</div>
-
-                              <SelectBoxStatusList
-                                id='dispatchStatus'
-                                selectStatus={order?.status}
-                              />
-                              {/* <select
-                                className='w-full m-3 rounded-lg'
-                                id='dispatchStatus'
-                              >
-                                {DispatchUtils.statusList.map((d, k) => {
-                                  return (
-                                    <option
-                                      key={k}
-                                      value={d}
-                                      selected={
-                                        order?.status === d ? true : false
-                                      }
-                                    >
-                                      {DispatchUtils.status.get(d)}
-                                    </option>
-                                  );
-                                })}
-                              </select> */}
+                              {isModify ? (
+                                <SelectBoxStatusList
+                                  id='dispatchStatus'
+                                  selectStatus={order?.status}
+                                  onChange={(d: any) => {}}
+                                />
+                              ) : (
+                                <>
+                                  <div className='w-full p-2 border-2 rounded-lg'>
+                                    {order
+                                      ? DispatchUtils.status.get(order.status)
+                                      : "loading.."}
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </div>
                         </div>
                         <div className=''>
-                          <div className='flex justify-end px-4 mt-2'>
-                            <Button
-                              variant='contained'
-                              className='w-full mr-2 bg-gray-700'
-                              onClick={() => {
-                                setMessage("");
-                                handleModalClose();
-                              }}
-                            >
-                              취소
-                            </Button>
-                            <Button
-                              variant='contained'
-                              className='w-full bg-gray-700'
-                              onClick={() => {
-                                onSubmitDispatch();
-                              }}
-                            >
-                              저장
-                            </Button>
+                          <div className='flex justify-end px-2 mt-2'>
+                            {isModify ? (
+                              <>
+                                <button
+                                  className='w-full p-2 mr-2 text-white bg-gray-700 rounded-lg'
+                                  onClick={() => {
+                                    setMessage("");
+                                    handleModalClose();
+                                  }}
+                                >
+                                  취소
+                                </button>
+                                <button
+                                  className='w-full p-2 mr-2 text-white bg-gray-700 rounded-lg'
+                                  onClick={() => {
+                                    onSubmitDispatch();
+                                  }}
+                                >
+                                  저장
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                className='w-full p-2 mr-2 text-white bg-gray-700 rounded-lg'
+                                onClick={() => {
+                                  setMessage("");
+                                  handleModalClose();
+                                }}
+                              >
+                                확인
+                              </button>
+                            )}
                           </div>
                         </div>
                       </Card>

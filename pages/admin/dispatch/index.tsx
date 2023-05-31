@@ -14,7 +14,6 @@ import { OrderModel } from "@libs/client/models/order.model";
 import ManageDispatchModal, { UIType } from "./manageDispatch";
 import AdminLayout from "@components/layouts/AdminLayout";
 import { UserModel } from "@libs/client/models/user.model";
-import { SecurityUtils } from "@libs/client/utils/security.utils";
 import { ElseUtils } from "@libs/client/utils/else.utils";
 
 export default function Orders() {
@@ -34,9 +33,12 @@ export default function Orders() {
   // 모달 관련 설정
   const [openModal, setOpenModal] = useState<boolean>(false);
 
+  // 기본 세팅
   useEffect(() => {
-    const cacheUser = ElseUtils.getUserFromLocalStorage();
-    setUser(cacheUser);
+    setTimeout(() => {
+      const cacheUser = ElseUtils.getUserFromLocalStorage();
+      setUser(cacheUser);
+    }, 100);
   }, []);
 
   const handleModalClose = (isChange: boolean = false) => {
@@ -71,10 +73,10 @@ export default function Orders() {
     "탑승일시",
     "출발지 위치명",
     "도착지 위치명",
-    "배차처리",
+    user?.role !== "USER" ? "배차처리" : "배차내용",
   ];
 
-  const headerWidths = [8, 8, 10, 15, 12, 8, 10, 10, 10, 10, 3];
+  const headerWidths = [8, 5, 10, 10, 12, 8, 10, 10, 10, 10, 10];
 
   const body = (res: OrderModel[]) => {
     return (
@@ -151,21 +153,41 @@ export default function Orders() {
                 {d.goalLocation === "" ? d.goalAirport : d.goalLocation}
               </div>
             </StyledTableCell>
-            <StyledTableCell component='th' scope='row'>
-              <div className='flex justify-center'>
-                {d.status === EnumDispatchStatus.IAMWEB_ORDER ? (
-                  <div className='font-bold text-orange-600'>배차요청전</div>
-                ) : (
-                  <Button
-                    variant='contained'
-                    className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
-                    onClick={() => onModifyDispatch(d)}
-                  >
-                    배차
-                  </Button>
-                )}
-              </div>
-            </StyledTableCell>
+            {user?.role !== "USER" ? (
+              <StyledTableCell component='th' scope='row'>
+                <div className='flex justify-center'>
+                  {d.status === EnumDispatchStatus.IAMWEB_ORDER ? (
+                    <div className='font-bold text-orange-600'>배차요청전</div>
+                  ) : (
+                    <Button
+                      variant='contained'
+                      className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
+                      onClick={() => onModifyDispatch(d)}
+                    >
+                      배차
+                    </Button>
+                  )}
+                </div>
+              </StyledTableCell>
+            ) : (
+              <StyledTableCell component='th' scope='row'>
+                <div className='flex justify-center'>
+                  {d.status === EnumDispatchStatus.IAMWEB_ORDER ? (
+                    <div className='font-bold text-orange-600'>배차요청전</div>
+                  ) : d.status === EnumDispatchStatus.DISPATCH_ING ? (
+                    <div className='font-bold text-orange-600'>배차확인중</div>
+                  ) : (
+                    <Button
+                      variant='contained'
+                      className='w-10 mr-2 font-bold text-black bg-green-300 hover:bg-slate-800 hover:text-white'
+                      onClick={() => onModifyDispatch(d)}
+                    >
+                      배차확인
+                    </Button>
+                  )}
+                </div>
+              </StyledTableCell>
+            )}
           </StyledTableRow>
         );
       })
