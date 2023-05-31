@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import CryptoJS from "crypto-js";
 
 import Sidebar from "@components/Sidebar";
 import { callAPI } from "@libs/client/call/call";

@@ -18,7 +18,7 @@ export const ElseUtils = {
       .then((d) => {
         localStorage.setItem(
           localstorageObj.key.userKey,
-          SecurityUtils.encrypt(JSON.stringify(d.data))
+          SecurityUtils.encrypt(JSON.stringify(d.data)).toString()
         );
         return d.data;
       });
