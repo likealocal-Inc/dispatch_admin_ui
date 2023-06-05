@@ -159,10 +159,22 @@ export function InfomationComponent({ uiType, information, isIamweb }: any) {
             isIamweb === true && infos !== undefined ? (
               <>
                 {Object.keys(infos).map((d) => {
+                  const url = `http://101.33.73.252:9999/api/airport/view/${infos[d]}`;
                   return (
                     <div key={d} className='flex flex-row justify-between'>
                       <div className='p-2 m-1 text-sm rounded-lg w-96 bg-slate-200'>
-                        {d}
+                        {d === "비행편" ? (
+                          <a
+                            href={url}
+                            target='_blank'
+                            rel='noreferrer'
+                            className='text-red-600'
+                          >
+                            {d}
+                          </a>
+                        ) : (
+                          d
+                        )}
                       </div>
                       {
                         // 배차처리 -> 출력만함
@@ -199,10 +211,10 @@ export function InfomationComponent({ uiType, information, isIamweb }: any) {
             ) : (
               <TextField
                 id='infomation'
-                defaultValue={uiType === UIType.MODIFY ? infos : "국적:\n이름:"}
+                defaultValue={uiType === UIType.MODIFY ? infos : ""}
                 className='w-full text-sm'
                 multiline
-                placeholder='여기에 추가 정보를 넣어 주세요 &&'
+                placeholder='여기에 추가 정보를 넣어 주세요'
                 rows={5}
               />
             )
