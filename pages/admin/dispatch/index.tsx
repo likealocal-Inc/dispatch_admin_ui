@@ -17,6 +17,7 @@ import { UserModel } from "@libs/client/models/user.model";
 import { ElseUtils } from "@libs/client/utils/else.utils";
 
 export default function Orders() {
+  const [reloadList, setReloadList] = useState(0);
   // 메세지 출력관련
   const [message, setMessage] = useState<MessageProps>();
 
@@ -85,7 +86,6 @@ export default function Orders() {
         const else01 = d.else01;
         let else01Json = undefined;
         if (else01 !== "") {
-          // console.log(else01);
           else01Json = JSON.parse(else01);
         }
         return (
@@ -245,6 +245,7 @@ export default function Orders() {
             setMessage={setMessage}
             onCreate={onCreateOpen}
             isShowSearch={true}
+            reloadList={reloadList}
           />
 
           {openModal ? (
@@ -253,6 +254,7 @@ export default function Orders() {
               open={openModal}
               handleModalClose={handleModalClose}
               order={selectOrder}
+              setReloadList={setReloadList}
             />
           ) : (
             ""

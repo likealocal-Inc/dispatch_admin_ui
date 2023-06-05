@@ -29,6 +29,7 @@ interface TableTemplatProps {
   setMessage: Function;
   onCreate?: Function;
   isShowSearch: boolean;
+  reloadList?: number;
 }
 
 export default function TableTemplate({
@@ -41,9 +42,12 @@ export default function TableTemplate({
   setMessage,
   onCreate,
   isShowSearch = false,
+  reloadList = 1,
 }: TableTemplatProps) {
   const [page, setPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+
+  const [showLoading, setShowLoading] = useState(false);
 
   const [condition, setCondition] = useState({});
   const [res, setRes] = useState([]);
@@ -64,6 +68,14 @@ export default function TableTemplate({
       isAllList: true,
     });
   };
+
+  useEffect(() => {
+    setShowLoading(true);
+    setTimeout(() => {
+      pageReload();
+      setShowLoading(false);
+    }, 300);
+  }, [reloadList]);
 
   useEffect(() => {
     pageReload();
@@ -91,6 +103,7 @@ export default function TableTemplate({
   return (
     <>
       {loading && <Loading />}
+      {showLoading && <Loading />}
       <div className='bg-gray-500'>
         <div className='flex justify-between pt-2 pb-1 pr-2'>
           {isShowSearch ? (

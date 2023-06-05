@@ -52,6 +52,7 @@ interface ModalProps {
   order?: OrderModel;
   open: boolean;
   handleModalClose: Function;
+  setReloadList: Function;
 }
 
 export default function ManageDispatchModal({
@@ -59,6 +60,7 @@ export default function ManageDispatchModal({
   order,
   handleModalClose,
   uiType,
+  setReloadList,
 }: ModalProps) {
   // 처음 실행 체크
   const [isFirst, setIsFirst] = useState(true);
@@ -92,6 +94,9 @@ export default function ManageDispatchModal({
   const [me, setMe] = useState<UserModel>();
   const [isModify, setIsModify] = useState(true);
 
+  // 주문 - 전달사항 데이터
+  const [informationForOrder, setInformationForOrder] = useState("");
+
   const [iamwebTimeOrderInfo, setIamwebTimeOrderInfo] = useState(undefined);
   // 주소관련
   const [isStartAddressSearchShow, setIsStartAddressSearchShow] =
@@ -106,7 +111,7 @@ export default function ManageDispatchModal({
         setMessage(data?.data.description.codeMessage);
       } else if (data?.ok === true) {
         handleModalClose(true);
-        location.reload();
+        setReloadList(Date.now() * 1);
       }
     }
     if (isFirst) {
@@ -148,14 +153,18 @@ export default function ManageDispatchModal({
     return { location, address };
   };
 
+  // 모달창이 열릴때 세팅하기
   useEffect(() => {
     // 주문 정보 수정모드
     if (uiType === UIType.MODIFY) {
       getOrderUserInfo();
     }
+
     // 배차관련 정보
     if (uiType === UIType.DISPATCH) {
       getOrderUserInfo();
+
+      // 주문아이디로 배차정보 조회하기
       callAPI({
         urlInfo: APIURLs.DISPATCH_GET_BY_ORDERID,
         addUrlParams: `/${order?.id}`,
@@ -163,6 +172,7 @@ export default function ManageDispatchModal({
         .then((d) => d.json())
         .then((d) => setDispatch(d.data));
     }
+
     // 생성 - 내 정보만 조회함
     // const me = callAPI({ urlInfo: APIURLs.ME }).then((d) => d.json());
     const me = ElseUtils.getUserFromLocalStorage();
@@ -170,12 +180,17 @@ export default function ManageDispatchModal({
     setMe(me);
     setIsModify(me.role !== "USER");
 
+    // 시간대절데이터가 있는지 확인
     const else01 = order?.else01;
     let else01Json = undefined;
     if (else01 !== undefined && else01 !== "") {
       else01Json = JSON.parse(else01);
+
+      // 시간대절데이터 json 형태로 저장
       setIamwebTimeOrderInfo(else01Json);
     }
+
+    setInformationForOrder(order!.information);
   }, [open]);
 
   const onSubmitDispatch = () => {
@@ -228,30 +243,36 @@ export default function ManageDispatchModal({
   // 수정, 생성 처리
   const onSubmit = () => {
     let orderTitle;
+    let else01Json = order?.else01;
 
     // 아임웹 시간대절상품일 경우 처리
-    let else01Json = "";
     if (order?.isIamweb) {
       orderTitle = order.orderTitle;
 
-      // 시간대절 데이터
-      const startGoal =
-        getHTMLElementByID<HTMLInputElement>("start_goal").value;
-      const tripRoute =
-        getHTMLElementByID<HTMLInputElement>("trip_route").value;
-      const timezon = getHTMLElementByID<HTMLInputElement>("timezon").value;
-      else01Json = `{"start_goal":"${startGoal}" , "trip_route":"${tripRoute}" , "timezon":"${timezon}"}`;
-    } else {
+      // 시간대절상품일 경우 처리
+      if (else01Json !== "") {
+        // 시간대절 데이터
+        const startGoal =
+          getHTMLElementByID<HTMLInputElement>("start_goal").value;
+        const tripRoute =
+          getHTMLElementByID<HTMLInputElement>("trip_route").value;
+        const timezon = getHTMLElementByID<HTMLInputElement>("timezon").value;
+        else01Json = `{"start_goal":"${startGoal}" , "trip_route":"${tripRoute}" , "timezon":"${timezon}"}`;
+      }
+    }
+    // 시간대절이 아닐경우 선택박스에서 상품명을 가져온다.
+    else {
       const titleObj = getHTMLElementByID<HTMLSelectElement>("orderTitle");
       orderTitle = titleObj.options[titleObj.selectedIndex].value;
     }
 
     const boardingDate = startDate;
-    let information = getHTMLElementByID<HTMLInputElement>("infomation").value;
+    let information = informationForOrder; // getHTMLElementByID<HTMLInputElement>("infomation").value;
 
     let startInfo;
     let goalInfo;
 
+    // 시간대절 주문이 아닐경우
     if (else01Json === "") {
       startInfo = getAddress(
         selectType,
@@ -313,7 +334,8 @@ export default function ManageDispatchModal({
       .then((d) => d.json())
       .then((d) => {
         if (d.ok === true) {
-          location.reload();
+          handleModalClose(true);
+          setReloadList(Date.now() * 1);
         }
       });
   };
@@ -432,6 +454,7 @@ export default function ManageDispatchModal({
                           <UserInfomation me={me} />
                         </div>
                         <div className='flex flex-col pl-5'>
+                          {/* 탑승일시 데이터 */}
                           {uiType === UIType.DISPATCH ? (
                             <InfoBoxWithTitle
                               title='탑승일시'
@@ -446,8 +469,10 @@ export default function ManageDispatchModal({
                             />
                           )}
 
+                          {/* 시간대절에 값이 없을 경우 */}
                           {iamwebTimeOrderInfo === undefined ? (
                             <>
+                              {/* 배차정보 - 출발지명 입력창 */}
                               {uiType === UIType.DISPATCH ? (
                                 <>
                                   <InfoBoxWithTitle
@@ -460,6 +485,7 @@ export default function ManageDispatchModal({
                                   />
                                 </>
                               ) : (
+                                // 주문 데이터 출발지명 수정모드
                                 <LocationAndAddress
                                   title={"출발지"}
                                   selectType={selectType}
@@ -473,6 +499,7 @@ export default function ManageDispatchModal({
                                   locationObj={order?.startLocation}
                                 />
                               )}
+                              {/* 배차모드 - 도착지정보 */}
                               {uiType === UIType.DISPATCH ? (
                                 <>
                                   <InfoBoxWithTitle
@@ -485,6 +512,7 @@ export default function ManageDispatchModal({
                                   />
                                 </>
                               ) : (
+                                // 수정모드 - 도착지정보
                                 <LocationAndAddress
                                   title={"도착지"}
                                   selectType={selectType}
@@ -499,7 +527,8 @@ export default function ManageDispatchModal({
                                 />
                               )}
                             </>
-                          ) : uiType === UIType.DISPATCH ? (
+                          ) : // 시간대절 - 배차정보입력창
+                          uiType === UIType.DISPATCH ? (
                             <>
                               <InfoBoxWithTitle
                                 title='출발지/도착지'
@@ -515,6 +544,7 @@ export default function ManageDispatchModal({
                               />
                             </>
                           ) : (
+                            // 시간대절 - 데이터 수정
                             <>
                               <IamWebTimeOrderInputBox
                                 id='start_goal'
@@ -535,10 +565,13 @@ export default function ManageDispatchModal({
                           )}
                         </div>
                       </div>
+
+                      {/* 전달사항 정보 세팅 */}
                       <InfomationComponent
                         uiType={uiType}
-                        information={order?.information}
+                        information={informationForOrder}
                         isIamweb={order?.isIamweb}
+                        setInformation={setInformationForOrder}
                       />
                     </Card>
                     {uiType === UIType.DISPATCH ? (

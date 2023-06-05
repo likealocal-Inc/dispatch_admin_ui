@@ -131,23 +131,30 @@ export function LocationAndAddress({
   );
 }
 
-export function InfomationComponent({ uiType, information, isIamweb }: any) {
-  const [infoData, setInfoData] = useState<any>();
-
-  let infos: any;
-
-  if (uiType === UIType.MODIFY || uiType === UIType.DISPATCH) {
-    if (isIamweb) {
-      infos = JSON.parse(information);
-    } else {
-      infos = information;
-    }
-  }
+export function InfomationComponent({
+  uiType,
+  information,
+  isIamweb,
+  setInformation,
+}: any) {
+  const [infoDataJson, setInfoDataJson] = useState<any>();
 
   useEffect(() => {
-    setInfoData(information);
-  }, []);
-  useEffect(() => {}, [infoData, setInfoData]);
+    if (information === undefined || information === "") return;
+    let infos = information;
+    // 수정모드 - 배차입력모드
+    if (uiType === UIType.MODIFY || uiType === UIType.DISPATCH) {
+      // 아임웹 일경우 - json처리
+      if (isIamweb) {
+        infos = JSON.parse(information);
+      } else {
+        infos = information;
+      }
+    }
+    setInfoDataJson(infos);
+  }, [information]);
+
+  useEffect(() => {}, [setInfoDataJson]);
   return (
     <>
       <div className='flex flex-row items-center w-full'>
@@ -156,10 +163,10 @@ export function InfomationComponent({ uiType, information, isIamweb }: any) {
           {
             // 전달사항 출력처리
             // 아임웹 -> json처리 해야 함
-            isIamweb === true && infos !== undefined ? (
+            isIamweb === true && infoDataJson !== undefined ? (
               <>
-                {Object.keys(infos).map((d) => {
-                  const url = `http://101.33.73.252:9999/api/airport/view/${infos[d]}`;
+                {Object.keys(infoDataJson).map((d) => {
+                  const url = `http://101.33.73.252:9999/api/airport/view/${infoDataJson[d]}`;
                   return (
                     <div key={d} className='flex flex-row justify-between'>
                       <div className='p-2 m-1 text-sm rounded-lg w-96 bg-slate-200'>
@@ -180,18 +187,18 @@ export function InfomationComponent({ uiType, information, isIamweb }: any) {
                         // 배차처리 -> 출력만함
                         uiType === UIType.DISPATCH ? (
                           <div className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'>
-                            {infos[d]}
+                            {infoDataJson[d]}
                           </div>
                         ) : (
                           <input
                             id={d}
-                            defaultValue={infos[d]}
+                            defaultValue={infoDataJson[d]}
                             className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'
                             onChange={(e) => {
                               const div = document.getElementById(d);
                               div!.innerHTML = e.target.value;
-                              infos[d] = e.target.value;
-                              setInfoData(JSON.stringify(infos));
+                              infoDataJson[d] = e.target.value;
+                              setInformation(JSON.stringify(infoDataJson));
                             }}
                           />
                         )
@@ -199,23 +206,28 @@ export function InfomationComponent({ uiType, information, isIamweb }: any) {
                     </div>
                   );
                 })}
-                <div className='hidden'>
-                  <TextField id='infomation' value={infoData} />
-                </div>
+                {/* <div className='hidden'>
+                  <TextField id='infomation' value={infoDataJson} />
+                </div> */}
               </>
             ) : // 업체에서 배차요청한 데이터일경우 배차처리시 화면에 출력만 함
             uiType === UIType.DISPATCH ? (
               <>
-                <div className='w-full h-full text-sm rounded-lg'>{infos}</div>
+                <div className='w-full h-full text-sm rounded-lg'>
+                  {infoDataJson}
+                </div>
               </>
             ) : (
               <TextField
                 id='infomation'
-                defaultValue={uiType === UIType.MODIFY ? infos : ""}
+                defaultValue={uiType === UIType.MODIFY ? infoDataJson : ""}
                 className='w-full text-sm'
                 multiline
                 placeholder='여기에 추가 정보를 넣어 주세요'
                 rows={5}
+                onChange={(d) => {
+                  setInformation(d.target.value);
+                }}
               />
             )
           }
