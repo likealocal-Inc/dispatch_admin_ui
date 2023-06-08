@@ -1,5 +1,6 @@
 import ModalMessage from "@components/Modals/ModalMessage";
 import AdminLayout from "@components/layouts/AdminLayout";
+import { Loading } from "@components/loading/Loading";
 import { callAPI } from "@libs/client/call/call";
 import { APIURLs } from "@libs/client/constants";
 import useCallAPI, { UseAPICallResult } from "@libs/client/hooks/useCallAPI";
@@ -10,6 +11,8 @@ import React, { useEffect, useState } from "react";
 const ProfileEdit = () => {
   const [profile, setProfile] = useState<UserModel>();
   const [message, setMessage] = useState("");
+
+  const [showLoading, setShowLoading] = useState(false);
 
   const [companyList, setCompanyList] = useState<CompanyModel[]>([]);
 
@@ -27,6 +30,12 @@ const ProfileEdit = () => {
         setMessage(data?.data.description.codeMessage);
       } else if (data?.ok === true) {
         setMessage("업데이트 완료");
+        setTimeout(() => {
+          setMessage("");
+          setShowLoading(false);
+        }, 200);
+      } else {
+        setShowLoading(false);
       }
     }
   }, [loading]);
@@ -39,6 +48,7 @@ const ProfileEdit = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    setShowLoading(true);
     setMessage("진행중.....");
     setTimeout(() => {
       update(profile);
@@ -66,6 +76,7 @@ const ProfileEdit = () => {
   return (
     <>
       <AdminLayout menuTitle='프로필 수정'>
+        {showLoading && <Loading />}
         {profile === undefined ? (
           "Loading..."
         ) : (
@@ -220,8 +231,15 @@ const ProfileEdit = () => {
                 /> */}
               </div>
 
-              <div className='w-full pt-2 pb-3 border-t border-red-500'></div>
-
+              <div
+                className={
+                  message === ""
+                    ? "hidden "
+                    : "flex justify-center p-2 m-4 font-bold text-red-500 border-2 rounded-md bg-slate-200"
+                }
+              >
+                {message}
+              </div>
               <div className='flex items-center justify-between'>
                 <button
                   className='w-full px-4 py-2 font-bold text-white bg-gray-500 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline'
@@ -229,15 +247,6 @@ const ProfileEdit = () => {
                 >
                   프로필 수정
                 </button>
-              </div>
-              <div
-                className={
-                  message === ""
-                    ? "hidden "
-                    : "flex justify-center p-2 m-2 font-bold text-red-500 border-2 rounded-md bg-slate-200"
-                }
-              >
-                {message}
               </div>
             </form>
           </div>

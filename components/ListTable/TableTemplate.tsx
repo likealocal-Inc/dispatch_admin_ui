@@ -13,7 +13,6 @@ import {
   SelectBoxStatusList,
 } from "@libs/client/utils/dispatch.ui.utils";
 import { UserModel } from "@libs/client/models/user.model";
-import { SecurityUtils } from "@libs/client/utils/security.utils";
 import { ElseUtils } from "@libs/client/utils/else.utils";
 
 interface TableTemplatProps {
