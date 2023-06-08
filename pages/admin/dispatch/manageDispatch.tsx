@@ -155,6 +155,7 @@ export default function ManageDispatchModal({
 
   // 모달창이 열릴때 세팅하기
   useEffect(() => {
+    if (open === false) return;
     // 주문 정보 수정모드
     if (uiType === UIType.MODIFY) {
       getOrderUserInfo();
@@ -189,9 +190,12 @@ export default function ManageDispatchModal({
       // 시간대절데이터 json 형태로 저장
       setIamwebTimeOrderInfo(else01Json);
     }
-
-    setInformationForOrder(order!.information);
   }, [open]);
+
+  useEffect(() => {
+    if (order === undefined) return;
+    setInformationForOrder(order!.information);
+  }, [order]);
 
   const onSubmitDispatch = () => {
     const dispatchStatus = getSelctOptionValue("dispatchStatus");
@@ -273,7 +277,7 @@ export default function ManageDispatchModal({
     let goalInfo;
 
     // 시간대절 주문이 아닐경우
-    if (else01Json === "") {
+    if (else01Json === "" || else01Json === undefined) {
       startInfo = getAddress(
         selectType,
         orderTypeList[0],
