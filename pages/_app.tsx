@@ -10,10 +10,10 @@ export default function App({ Component, pageProps }: AppProps) {
   // const socket = useSocket("http://127.0.0.1:9999");
 
   return (
-    <SWRConfig
-      value={{ fetcher: (url: string) => fetch(url).then((res) => res.json()) }}
-    >
-      <Component {...pageProps} />
-    </SWRConfig>
+    // <SWRConfig
+    //   value={{ fetcher: (url: string) => fetch(url).then((res) => res.json()) }}
+    // >
+    <Component {...pageProps} />
+    // </SWRConfig>
   );
 }

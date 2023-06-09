@@ -39,6 +39,11 @@ export interface APIURLType {
  * 실제 호출할 URL등록
  */
 export const APIURLs = {
+  HEALTH_CHECL: <APIURLType>{
+    url: makeAPIURL("c.auth/healthcheck"),
+    method: METHOD.GET,
+    desc: "health check",
+  },
   JOIN: <APIURLType>{
     url: makeAPIURL("c.auth/join/email"),
     method: METHOD.POST,

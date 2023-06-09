@@ -1,3 +1,4 @@
+import axios from "axios";
 import { callAPI } from "../call/call";
 import { APIURLs, localstorageObj } from "../constants";
 import { SecurityUtils } from "./security.utils";

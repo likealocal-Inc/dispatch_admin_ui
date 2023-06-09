@@ -1,3 +1,4 @@
+import axios from "axios";
 import { METHOD, APIURLType } from "../constants";
 import { getToken } from "../utils/token.utils";
 interface CallAPIProps {
@@ -11,6 +12,12 @@ export async function callAPI({
   params = {},
   addUrlParams = "",
 }: CallAPIProps): Promise<Response> {
+  try {
+    await axios.get("/api/healthcheck");
+  } catch (err) {
+    location.href = "/error_network.html";
+  }
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${await getToken()}`,
