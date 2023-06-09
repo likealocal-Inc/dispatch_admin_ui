@@ -448,7 +448,7 @@ export default function ManageDispatchModal({
                 {loading && <div>Loading...</div>}
                 <div className=''>
                   <Stack className='flex flex-row'>
-                    <Card className='p-6'>
+                    <Card className='p-6 rounded-lg'>
                       <div className='flex flex-row'>
                         <div className='flex flex-col p-3'>
                           <div className='flex flex-row items-center w-80'>
@@ -657,7 +657,7 @@ export default function ManageDispatchModal({
                       />
                     </Card>
                     {uiType === UIType.DISPATCH ? (
-                      <Card className='p-1 w-[500px]'>
+                      <Card className='p-1 w-[500px] pb-5 ml-3 rounded-lg'>
                         <div className='flex flex-row'>
                           <div className='flex flex-col p-3'>
                             <div className='flex flex-row'>
