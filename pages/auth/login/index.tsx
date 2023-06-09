@@ -27,12 +27,13 @@ const Login: NextPage = () => {
   const router = useRouter();
 
   const onValid = (validForm: LoginForm) => {
-    if (loading) return;
     setShowLoading(true);
+    if (loading) return;
     login(validForm);
   };
 
   useEffect(() => {
+    // 로그인 요청에 따른 처리
     if (loading === false) {
       if (data?.ok) {
         setToken(data.data.sessionKey);
@@ -41,10 +42,8 @@ const Login: NextPage = () => {
         setErrorMessage(data?.data.description.codeMessage);
         setIsOpen(true);
       }
-      setShowLoading(false);
-    } else {
-      setShowLoading(false);
     }
+    setShowLoading(false);
   }, [loading, data, router]);
 
   return (

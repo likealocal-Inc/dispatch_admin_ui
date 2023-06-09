@@ -33,8 +33,8 @@ export function InfoBox({ info }: any) {
 }
 export function InfoBoxWithTitle({ title, info }: any) {
   return (
-    <div className='flex flex-row items-center my-1 w-96'>
-      <div className='text-sm w-28'>{title}</div>
+    <div className='flex flex-row items-center my-1 w-80'>
+      <div className='w-24 text-sm'>{title}</div>
       <InfoBox info={info} />
     </div>
   );
@@ -213,18 +213,22 @@ export function InfomationComponent({
             ) : // 업체에서 배차요청한 데이터일경우 배차처리시 화면에 출력만 함
             uiType === UIType.DISPATCH ? (
               <>
-                <div className='w-full h-full text-sm rounded-lg'>
+                <div className='w-full h-full p-3 whitespace-pre rounded-lg'>
                   {infoDataJson}
                 </div>
               </>
             ) : (
               <TextField
                 id='infomation'
-                defaultValue={uiType === UIType.MODIFY ? infoDataJson : ""}
+                defaultValue={
+                  uiType === UIType.MODIFY
+                    ? infoDataJson
+                    : "탑승자수:\n수화물수:\n경유지:\n경유지주소:\n국적:\n기타:\n"
+                }
                 className='w-full text-sm'
                 multiline
-                placeholder='여기에 추가 정보를 넣어 주세요'
-                rows={5}
+                placeholder='탑승자수, 수화물수, 경유지, 경유지주소, 국적 정보를 넣어 주세요'
+                rows={6}
                 onChange={(d) => {
                   setInformation(d.target.value);
                 }}
@@ -274,14 +278,14 @@ export function DispatchProcessInfo({
   }, [value]);
 
   return (
-    <div className='flex flex-row items-center w-72'>
-      <div className='w-28'>{title}</div>
+    <div className='flex flex-row items-center w-56'>
+      <div className='w-24'>{title}</div>
       <div className='w-full m-1'>
         {isModify ? (
           <input
             id={id}
             defaultValue={val}
-            className='w-full p-3 border-dashed rounded-lg '
+            className='w-full p-2 border-dashed rounded-lg '
             type={isNumber ? "number" : "text"}
           />
         ) : (
@@ -395,6 +399,14 @@ export function IamWebTimeOrderInputBox({ title, id, value }: any) {
           <TextField id={id} defaultValue={value} className='w-full' />
         </div>
       </div>
+    </>
+  );
+}
+
+export function GapWidthForDispatchInput({ num }: any) {
+  return (
+    <>
+      <div className='w-4' />
     </>
   );
 }

@@ -14,4 +14,10 @@ export interface DispatchModel {
   else03: string;
   userId: number;
   orderId: number;
+
+  // 2023.06.09 추가 (초과요금, 차량타입, 결제방식, 메모)
+  exceedFare: number;
+  payType: string;
+  carType: string;
+  memo: string;
 }

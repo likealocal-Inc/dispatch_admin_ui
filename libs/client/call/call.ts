@@ -12,6 +12,7 @@ export async function callAPI({
   params = {},
   addUrlParams = "",
 }: CallAPIProps): Promise<Response> {
+  // 서버 건강체크
   try {
     await axios.get("/api/healthcheck");
   } catch (err) {

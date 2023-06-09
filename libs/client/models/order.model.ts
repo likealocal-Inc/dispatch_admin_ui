@@ -22,4 +22,10 @@ export interface OrderModel {
   userId: number;
   user: UserModel;
   company: string;
+
+  // 2023.06.09추가 (탑승자, 탑승자전번)
+  customName: string;
+  customPhone: string;
+
+  key: number;
 }

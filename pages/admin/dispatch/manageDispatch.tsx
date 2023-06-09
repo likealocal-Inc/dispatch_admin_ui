@@ -24,6 +24,7 @@ import { UserModel } from "@libs/client/models/user.model";
 import {
   BoardingDateComponent,
   DispatchProcessInfo,
+  GapWidthForDispatchInput,
   IamWebTimeOrderInputBox,
   InfoBoxWithTitle,
   InfomationComponent,
@@ -197,63 +198,79 @@ export default function ManageDispatchModal({
     setInformationForOrder(order!.information);
   }, [order]);
 
+  // 배차정보 입력 저장
   const onSubmitDispatch = () => {
     const dispatchStatus = getSelctOptionValue("dispatchStatus");
 
     // 배차 완료가 아닐경우는 데이터 확인이 필요 없음
-    if (dispatchStatus !== EnumDispatchStatus.DISPATCH_COMPLETE) {
-      onStatusUpdate(dispatchStatus);
-    } else {
-      const carCompany =
-        getHTMLElementByID<HTMLInputElement>("carCompany").value;
-      const jiniName = getHTMLElementByID<HTMLInputElement>("jiniName").value;
-      const carInfo = getHTMLElementByID<HTMLInputElement>("carInfo").value;
-      const jiniPhone = getHTMLElementByID<HTMLInputElement>("jiniPhone").value;
-      const _baseFare = getHTMLElementByID<HTMLInputElement>("baseFare").value;
-      const _addFare = getHTMLElementByID<HTMLInputElement>("addFare").value;
-      const _totalFare =
-        getHTMLElementByID<HTMLInputElement>("totalFare").value;
+    // if (dispatchStatus !== EnumDispatchStatus.DISPATCH_COMPLETE) {
+    onStatusUpdate(dispatchStatus);
+    // } else {
+    const carCompany = getHTMLElementByID<HTMLInputElement>("carCompany").value;
+    const jiniName = getHTMLElementByID<HTMLInputElement>("jiniName").value;
+    const carInfo = getHTMLElementByID<HTMLInputElement>("carInfo").value;
+    const jiniPhone = getHTMLElementByID<HTMLInputElement>("jiniPhone").value;
+    const _baseFare = getHTMLElementByID<HTMLInputElement>("baseFare").value;
+    const _addFare = getHTMLElementByID<HTMLInputElement>("addFare").value;
+    const _totalFare = getHTMLElementByID<HTMLInputElement>("totalFare").value;
 
-      const baseFare = _baseFare === "" ? 0 : +_baseFare;
-      const addFare = _baseFare === "" ? 0 : +_addFare;
-      const totalFare = _baseFare === "" ? 0 : +_totalFare;
-      if (
-        carCompany === "" ||
-        jiniName === "" ||
-        carInfo === "" ||
-        jiniPhone === ""
-      ) {
-        setMessage("모든 데이터를 입력해주세요");
-      } else {
-        call({
-          carCompany,
-          jiniName,
-          carInfo,
-          jiniPhone,
-          baseFare,
-          addFare,
-          totalFare,
-          else01: "",
-          else02: "",
-          else03: "",
-          orderId: dispatch ? dispatch.orderId : order!.id,
-          dispatchStatus:
-            dispatchStatus === order!.status ? "" : dispatchStatus,
-        });
-      }
+    // 2023.06.09 추가
+    const _exceedFare =
+      getHTMLElementByID<HTMLInputElement>("exceedFare").value;
+    const carType = getSelctOptionValue("carType");
+    const payType = getSelctOptionValue("payType");
+    const memo = getHTMLElementByID<HTMLTextAreaElement>("memo").value;
+
+    const baseFare = _baseFare === "" ? 0 : +_baseFare;
+    const addFare = _baseFare === "" ? 0 : +_addFare;
+    const totalFare = _baseFare === "" ? 0 : +_totalFare;
+    const exceedFare = _baseFare === "" ? 0 : +_exceedFare;
+    if (
+      carCompany === "" ||
+      jiniName === "" ||
+      carInfo === "" ||
+      jiniPhone === ""
+    ) {
+      setMessage("모든 데이터를 입력해주세요");
+    } else {
+      call({
+        carCompany,
+        jiniName,
+        carInfo,
+        jiniPhone,
+        baseFare,
+        addFare,
+        totalFare,
+        else01: "",
+        else02: "",
+        else03: "",
+        orderId: dispatch ? dispatch.orderId : order!.id,
+        dispatchStatus: dispatchStatus === order!.status ? "" : dispatchStatus,
+
+        // 2023.06.09 추가
+        carType,
+        payType,
+        memo,
+        exceedFare,
+      });
+      // }
     }
   };
 
-  // 수정, 생성 처리
+  // 배차신청 수정, 생성 처리
   const onSubmit = () => {
     let orderTitle;
     let else01Json = order?.else01;
 
-    // 아임웹 시간대절상품일 경우 처리
+    // 2023.06.09 추가 탑승자,탑승자전번
+    let customName = "";
+    let customPhone = "";
+
+    // 아임웹일 경우
     if (order?.isIamweb) {
       orderTitle = order.orderTitle;
 
-      // 시간대절상품일 경우 처리
+      // 시간대절상품
       if (else01Json !== "") {
         // 시간대절 데이터
         const startGoal =
@@ -268,6 +285,10 @@ export default function ManageDispatchModal({
     else {
       const titleObj = getHTMLElementByID<HTMLSelectElement>("orderTitle");
       orderTitle = titleObj.options[titleObj.selectedIndex].value;
+
+      // 2023.06.09 추가 (탑승자, 탑승자전번)
+      customName = getHTMLElementByID<HTMLInputElement>("customName").value;
+      customPhone = getHTMLElementByID<HTMLInputElement>("customPhone").value;
     }
 
     const boardingDate = startDate;
@@ -312,6 +333,10 @@ export default function ManageDispatchModal({
           information,
           else01: "",
           else02: "",
+
+          // 2023.06.09 추가
+          customName,
+          customPhone,
         });
       }
     } else {
@@ -324,6 +349,10 @@ export default function ManageDispatchModal({
           information,
           else01: else01Json,
           else02: "",
+
+          // 2023.06.09 추가
+          customName,
+          customPhone,
         });
       }
     }
@@ -422,8 +451,10 @@ export default function ManageDispatchModal({
                     <Card className='p-6'>
                       <div className='flex flex-row'>
                         <div className='flex flex-col p-3'>
-                          <div className='flex flex-row items-center w-96'>
-                            <div className='text-sm w-28'>상품구분</div>
+                          <div className='flex flex-row items-center w-80'>
+                            <div className='w-24 text-sm'>상품구분</div>
+
+                            {/* 배차입력, 아임웹일 경우는 타이틀만 보여준다. */}
                             {uiType === UIType.DISPATCH || order?.isIamweb ? (
                               <div className='flex items-center justify-center w-full h-full m-2 rounded-lg bg-slate-300'>
                                 <div className='px-2 text-xs'>
@@ -472,11 +503,10 @@ export default function ManageDispatchModal({
                               setStartDate={setStartDate}
                             />
                           )}
-
                           {/* 시간대절에 값이 없을 경우 */}
                           {iamwebTimeOrderInfo === undefined ? (
                             <>
-                              {/* 배차정보 - 출발지명 입력창 */}
+                              {/* 배차정보 - 출발지명 도착지명 */}
                               {uiType === UIType.DISPATCH ? (
                                 <>
                                   <InfoBoxWithTitle
@@ -487,25 +517,6 @@ export default function ManageDispatchModal({
                                     title='출발지주소'
                                     info={order?.startAddress}
                                   />
-                                </>
-                              ) : (
-                                // 주문 데이터 출발지명 수정모드
-                                <LocationAndAddress
-                                  title={"출발지"}
-                                  selectType={selectType}
-                                  orderType={orderTypeList[0]}
-                                  uiType={uiType}
-                                  address={startAddress}
-                                  setIsAddressSearchShow={
-                                    setIsStartAddressSearchShow
-                                  }
-                                  locationStr={"startLocation"}
-                                  locationObj={order?.startLocation}
-                                />
-                              )}
-                              {/* 배차모드 - 도착지정보 */}
-                              {uiType === UIType.DISPATCH ? (
-                                <>
                                   <InfoBoxWithTitle
                                     title='도착지'
                                     info={order?.goalLocation}
@@ -516,19 +527,33 @@ export default function ManageDispatchModal({
                                   />
                                 </>
                               ) : (
-                                // 수정모드 - 도착지정보
-                                <LocationAndAddress
-                                  title={"도착지"}
-                                  selectType={selectType}
-                                  orderType={orderTypeList[1]}
-                                  uiType={uiType}
-                                  address={goalAddress}
-                                  setIsAddressSearchShow={
-                                    setIsGoalAddressSearchShow
-                                  }
-                                  locationStr={"goalLocation"}
-                                  locationObj={order?.goalLocation}
-                                />
+                                <>
+                                  {/* 주문 데이터 출발지명 도착지명수정모드 */}
+                                  <LocationAndAddress
+                                    title={"출발지"}
+                                    selectType={selectType}
+                                    orderType={orderTypeList[0]}
+                                    uiType={uiType}
+                                    address={startAddress}
+                                    setIsAddressSearchShow={
+                                      setIsStartAddressSearchShow
+                                    }
+                                    locationStr={"startLocation"}
+                                    locationObj={order?.startLocation}
+                                  />
+                                  <LocationAndAddress
+                                    title={"도착지"}
+                                    selectType={selectType}
+                                    orderType={orderTypeList[1]}
+                                    uiType={uiType}
+                                    address={goalAddress}
+                                    setIsAddressSearchShow={
+                                      setIsGoalAddressSearchShow
+                                    }
+                                    locationStr={"goalLocation"}
+                                    locationObj={order?.goalLocation}
+                                  />
+                                </>
                               )}
                             </>
                           ) : // 시간대절 - 배차정보입력창
@@ -567,6 +592,59 @@ export default function ManageDispatchModal({
                               />
                             </>
                           )}
+
+                          {/* 2023.06.09 추가 - 탑승자명/탑승자번호 - 아임웹이 아닐 경우 */}
+                          {order?.isIamweb ? (
+                            ""
+                          ) : (
+                            <>
+                              {uiType === UIType.DISPATCH ? (
+                                <>
+                                  <InfoBoxWithTitle
+                                    title='탑승자이름'
+                                    info={order?.customName}
+                                  />
+                                  <InfoBoxWithTitle
+                                    title='탑승자번호'
+                                    info={order?.customPhone}
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <div className='flex flex-row items-center w-96'>
+                                    <div className='text-sm w-28'>탑승자명</div>
+                                    <div className='w-full m-1'>
+                                      <TextField
+                                        id='customName'
+                                        defaultValue={
+                                          uiType === UIType.MODIFY
+                                            ? order?.customName
+                                            : ""
+                                        }
+                                        className='w-full'
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className='flex flex-row items-center w-96'>
+                                    <div className='text-sm w-28'>
+                                      탑승자번호
+                                    </div>
+                                    <div className='w-full m-1'>
+                                      <TextField
+                                        id='customPhone'
+                                        defaultValue={
+                                          uiType === UIType.MODIFY
+                                            ? order?.customPhone
+                                            : ""
+                                        }
+                                        className='w-full'
+                                      />
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </>
+                          )}
                         </div>
                       </div>
 
@@ -579,71 +657,156 @@ export default function ManageDispatchModal({
                       />
                     </Card>
                     {uiType === UIType.DISPATCH ? (
-                      <Card className='p-6 w-[450px]'>
+                      <Card className='p-1 w-[500px]'>
                         <div className='flex flex-row'>
                           <div className='flex flex-col p-3'>
-                            <DispatchProcessInfo
-                              title='운수사'
-                              id='carCompany'
-                              value={dispatch ? dispatch.carCompany : ""}
-                              isModify={isModify}
-                            />
-                            <DispatchProcessInfo
-                              title='지니명'
-                              id='jiniName'
-                              value={dispatch ? dispatch.jiniName : ""}
-                              isModify={isModify}
-                            />
-                            <DispatchProcessInfo
-                              title='차량정보'
-                              id='carInfo'
-                              value={dispatch ? dispatch.carInfo : ""}
-                              isModify={isModify}
-                            />
-                            <DispatchProcessInfo
-                              title='연락처'
-                              id='jiniPhone'
-                              value={dispatch ? dispatch.jiniPhone : ""}
-                              isModify={isModify}
-                            />
-                            <DispatchProcessInfo
-                              title='기본요금'
-                              id='baseFare'
-                              value={dispatch ? dispatch.baseFare : 0}
-                              isNumber={true}
-                              isModify={isModify}
-                            />
-                            <DispatchProcessInfo
-                              title='추가요금'
-                              id='addFare'
-                              value={dispatch ? dispatch.addFare : 0}
-                              isNumber={true}
-                              isModify={isModify}
-                            />
-                            <DispatchProcessInfo
-                              title='요금총합'
-                              id='totalFare'
-                              value={dispatch ? dispatch.totalFare : 0}
-                              isNumber={true}
-                              isModify={isModify}
-                            />
-                            <div className='flex flex-row items-center w-72'>
-                              <div className='w-28'>상태값</div>
-                              {isModify ? (
-                                <SelectBoxStatusList
-                                  id='dispatchStatus'
-                                  selectStatus={order?.status}
-                                  onChange={(d: any) => {}}
-                                />
-                              ) : (
-                                <>
-                                  <div className='w-full p-2 border-2 rounded-lg'>
-                                    {order
-                                      ? DispatchUtils.status.get(order.status)
-                                      : "loading.."}
-                                  </div>
-                                </>
-                              )}
+                            <div className='flex flex-row'>
+                              <DispatchProcessInfo
+                                title='운수사'
+                                id='carCompany'
+                                value={dispatch ? dispatch.carCompany : ""}
+                                isModify={isModify}
+                              />
+                              <GapWidthForDispatchInput />
+                              <div className='flex flex-row items-center w-56'>
+                                <div className='w-28'>상태값</div>
+                                {isModify ? (
+                                  <SelectBoxStatusList
+                                    id='dispatchStatus'
+                                    selectStatus={order?.status}
+                                    onChange={(d: any) => {}}
+                                  />
+                                ) : (
+                                  <>
+                                    <div className='w-full p-2 border-2 rounded-lg'>
+                                      {order
+                                        ? DispatchUtils.status.get(order.status)
+                                        : "loading.."}
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className='flex flex-row'>
+                              <DispatchProcessInfo
+                                title='지니명'
+                                id='jiniName'
+                                value={dispatch ? dispatch.jiniName : ""}
+                                isModify={isModify}
+                              />
+                              <GapWidthForDispatchInput />
+                              <DispatchProcessInfo
+                                title='연락처'
+                                id='jiniPhone'
+                                value={dispatch ? dispatch.jiniPhone : ""}
+                                isModify={isModify}
+                              />
+                            </div>
+                            <div className='flex flex-row'>
+                              <DispatchProcessInfo
+                                title='차량정보'
+                                id='carInfo'
+                                value={dispatch ? dispatch.carInfo : ""}
+                                isModify={isModify}
+                              />
+                              <GapWidthForDispatchInput />
+                              <select className='my-3 rounded-lg' id='carType'>
+                                <option
+                                  value='블랙'
+                                  selected={
+                                    dispatch?.carType === "블랙" ? true : false
+                                  }
+                                >
+                                  블랙
+                                </option>
+                                <option
+                                  value='화이트'
+                                  selected={
+                                    dispatch?.carType === "화이트"
+                                      ? true
+                                      : false
+                                  }
+                                >
+                                  화이트
+                                </option>
+                              </select>
+                            </div>
+                            <div className='flex flex-row'>
+                              <DispatchProcessInfo
+                                title='기본요금'
+                                id='baseFare'
+                                value={dispatch ? dispatch.baseFare : 0}
+                                isNumber={true}
+                                isModify={isModify}
+                              />
+                              <GapWidthForDispatchInput />
+                              <DispatchProcessInfo
+                                title='추가요금'
+                                id='addFare'
+                                value={dispatch ? dispatch.addFare : 0}
+                                isNumber={true}
+                                isModify={isModify}
+                              />
+                            </div>
+                            <div className='flex flex-row'>
+                              <DispatchProcessInfo
+                                title='초과요금'
+                                id='exceedFare'
+                                value={dispatch ? dispatch.exceedFare : 0}
+                                isNumber={true}
+                                isModify={isModify}
+                              />
+                              <GapWidthForDispatchInput />
+                              <DispatchProcessInfo
+                                title='요금총합'
+                                id='totalFare'
+                                value={dispatch ? dispatch.totalFare : 0}
+                                isNumber={true}
+                                isModify={isModify}
+                              />
+                            </div>
+                            <div className='flex flex-row items-center w-56'>
+                              <div className='w-28'>결제타입</div>
+                              <select
+                                className='w-full my-3 rounded-lg'
+                                id='payType'
+                              >
+                                <option
+                                  value='카드'
+                                  selected={
+                                    dispatch?.payType === "카드" ? true : false
+                                  }
+                                >
+                                  카드
+                                </option>
+                                <option
+                                  value='현금'
+                                  selected={
+                                    dispatch?.payType === "현금" ? true : false
+                                  }
+                                >
+                                  현금
+                                </option>
+                                <option
+                                  value='후불'
+                                  selected={
+                                    dispatch?.payType === "후불" ? true : false
+                                  }
+                                >
+                                  후불
+                                </option>
+                              </select>
+                            </div>
+                            <div className='flex flex-col p-1'>
+                              <div className='p-2'>메모</div>
+                              <TextField
+                                multiline
+                                minRows={3}
+                                maxRows={3}
+                                defaultValue={dispatch?.memo}
+                                id='memo'
+                              />
                             </div>
                           </div>
                         </div>
@@ -661,7 +824,7 @@ export default function ManageDispatchModal({
                                   취소
                                 </button>
                                 <button
-                                  className='w-full p-2 mr-2 text-white bg-gray-700 rounded-lg'
+                                  className='w-full p-2 mr-2 text-white bg-gray-700 rounded-lg hover:bg-gray-900'
                                   onClick={() => {
                                     onSubmitDispatch();
                                   }}

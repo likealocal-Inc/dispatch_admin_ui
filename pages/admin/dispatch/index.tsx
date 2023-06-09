@@ -65,19 +65,20 @@ export default function Orders() {
 
   const headers = [
     "배차상태",
-    "회사",
+    "주문ID",
     "주문일시",
     "주문상품",
     "소속/이름/직급",
     "연락처",
     "이메일",
     "탑승일시",
+    "탑승자명(연락처)",
     "출발지 위치명",
     "도착지 위치명",
     user?.role !== "USER" ? "배차처리" : "배차내용",
   ];
 
-  const headerWidths = [8, 5, 10, 10, 12, 8, 10, 10, 10, 10, 10];
+  const headerWidths = [8, 10, 7, 10, 12, 5, 10, 7, 5, 10, 10, 10];
 
   const body = (res: OrderModel[]) => {
     return (
@@ -114,7 +115,7 @@ export default function Orders() {
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center font-bold text-slate-600'>
-                {d.company}
+                {d.company}-{d.key}
               </div>
             </StyledTableCell>
             <StyledTableCell
@@ -147,6 +148,16 @@ export default function Orders() {
               className=''
               dangerouslySetInnerHTML={{
                 __html: `${DateUtils.iso8601DateToString(d.boardingDate)}`,
+              }}
+            ></StyledTableCell>
+            <StyledTableCell
+              component='th'
+              scope='row'
+              className=''
+              dangerouslySetInnerHTML={{
+                __html: `${d.isIamweb ? "-" : ""}${d.customName}</br>${
+                  d.customPhone
+                }`,
               }}
             ></StyledTableCell>
             <StyledTableCell component='th' scope='row'>
