@@ -41,10 +41,13 @@ export default function ManageDispatchModal({
 }: ModalProps) {
   // 처음 실행 체크
   const [isFirst, setIsFirst] = useState(true);
-
+  const [message, setMessage] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [selectType, setSelectType] = useState(orderTypeList[0]);
+  const [me, setMe] = useState<UserModel>();
+  const [isModify, setIsModify] = useState(true);
   // 배차정보 모델
   const [dispatch, setDispatch] = useState<DispatchModel>();
-
   // 데이터 저장 Hook
   const [call, { loading, data, error }] = useCallAPI<UseAPICallResult>({
     url:
@@ -60,18 +63,8 @@ export default function ManageDispatchModal({
     // ? `/${dispatch!.id}`
     // "",
   });
-
-  const [message, setMessage] = useState("");
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-
-  const [selectType, setSelectType] = useState(orderTypeList[0]);
-
-  const [me, setMe] = useState<UserModel>();
-  const [isModify, setIsModify] = useState(true);
-
   // 주문 - 전달사항 데이터
   const [informationForOrder, setInformationForOrder] = useState("");
-
   const [iamwebTimeOrderInfo, setIamwebTimeOrderInfo] = useState(undefined);
   // 주소관련
   const [isStartAddressSearchShow, setIsStartAddressSearchShow] =

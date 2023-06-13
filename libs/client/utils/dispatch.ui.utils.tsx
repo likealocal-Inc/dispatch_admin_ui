@@ -9,7 +9,6 @@ import { CompanyModel } from "../models/company.model";
 import { getHTMLElementByID, getSelctOptionValue } from "./html.utils";
 import { DateUtils } from "@libs/date.utils";
 import "react-datepicker/dist/react-datepicker.css";
-import { number } from "prop-types";
 
 export enum UIType {
   CREATE,
@@ -639,8 +638,11 @@ export function onSubmitDispatch({
 }: any) {
   const dispatchStatus = getSelctOptionValue("dispatchStatus");
 
+  let isUpdateSatatus = false;
+
   // 배차 완료가 아닐경우는 데이터 확인이 필요 없음
   if (dispatchStatus !== order.status) {
+    isUpdateSatatus = true;
     onStatusUpdate({
       order,
       status: dispatchStatus,
@@ -723,9 +725,6 @@ export function onSubmitDispatch({
     dispatch.totalFare !== totalFare ||
     dispatch.exceedFare !== exceedFare
   ) {
-    console.log(dispatch);
-    console.log(order);
-
     if (dispatch.noData === true) {
       callAPI({
         urlInfo: APIURLs.DISPATCH_CREATE,
@@ -788,7 +787,10 @@ export function onSubmitDispatch({
         });
     }
   } else {
-    alert("변경된 데이터가 없음");
+    if (!isUpdateSatatus) {
+      alert("변경된 데이터가 없음");
+    }
+
     return;
   }
   // }
