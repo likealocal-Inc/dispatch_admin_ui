@@ -9,6 +9,8 @@ import { CompanyModel } from "../models/company.model";
 import { getHTMLElementByID, getSelctOptionValue } from "./html.utils";
 import { DateUtils } from "@libs/date.utils";
 import "react-datepicker/dist/react-datepicker.css";
+import { DispatchModel } from "../models/dispatch.model";
+import { OrderModel } from "../models/order.model";
 
 export enum UIType {
   CREATE,
@@ -542,8 +544,8 @@ export function DispatchInfoInput({
                   카드
                 </option>
                 <option
-                  value='현금'
-                  selected={dispatch?.payType === "현금" ? true : false}
+                  value='직접결제'
+                  selected={dispatch?.payType === "직접결제" ? true : false}
                 >
                   현금
                 </option>
@@ -1155,24 +1157,200 @@ function SendMessageButton({ title, onClick }: any) {
 // 문자 전송 텐플릿
 const TxtTemplateJson = {
   dispatchComplete: {
-    company: "‘(회사명)/(주문번호)’ 건의 배차가 완료되었습니다.",
-    custom: "‘인사말’ + 배차정보",
-    jini: "‘인사말’ + 고객정보",
+    card_after: {
+      getCompany: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+예약 배차정보를 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getCustom: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+고객님의 예약을 함께 할 지니(기사)님의 정보를 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getJini: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+후불 예약 배차정보 안내드립니다.
+- 운임료는 고객에게 절대! 받으면 안됩니다.!!
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 탑승자 연락처: ${order.customPhone}
+▶ 예약금액: ${dispatch.totalFare}
+- 추가요금 발생시 지급 가능 / 기타요금 발생시 영수증 제출 필수
+▶ 기타:
+
+감사합니다.`,
+    },
+    direct: {
+      getCompany: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+예약 배차정보가 변경되어 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getCustom: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+고객님의 예약을 함께 할 지니(기사)님의 정보가 변경되어 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getJini: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+후불 예약 배차정보 안내드립니다.
+- 운임료는 고객 탑승 시 "직접결제"로 결제 해주시기 바랍니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 탑승자 연락처: ${order.customPhone}
+▶ 예약금액: ${dispatch.totalFare}
+- 추가요금 발생시 지급 가능 / 기타요금 발생시 영수증 제출 필수
+▶ 기타:
+
+감사합니다.`,
+    },
   },
   dispatchInfomationUpdate: {
-    company: "‘(회사명)/(주문번호)’ 건의 배차정보가 수정되었습니다.",
-    custom: "‘인사말’ + 배차정보수정",
-    jini: "‘인사말’ + 고객정보수정",
-  },
-  diapatchCancel: {
-    company: "‘(회사명)/(주문번호)’ 건의 배차가 취소되었습니다.",
-    custom: "‘인사말’ + 배차취소",
-    jini: "‘인사말’ + 배차취소",
-  },
-  diapatchFail: {
-    company: "‘(회사명)/(주문번호)’ 건의 배차가 실패되었습니다.",
-    custom: "‘인사말’ + 배차실패",
-    jini: "‘인사말’ + 배차실패",
+    card_after: {
+      getCompany: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+예약 배차정보가 변경되어 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getCustom: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+고객님의 예약을 함께 할 지니(기사)님의 정보가 변경되어 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getJini: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+후불 예약 배차정보가 변경되어 안내드립니다.
+- 운임료는 고객에게 절대! 받으면 안됩니다.!!
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 탑승자 연락처: ${order.customPhone}
+▶ 예약금액: ${dispatch.totalFare}
+- 추가요금 발생시 지급 가능 / 기타요금 발생시 영수증 제출 필수
+▶ 기타:
+
+감사합니다.`,
+    },
+    direct: {
+      getCompany: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+예약 배차정보가 변경되어 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getCustom: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+고객님의 예약을 함께 할 지니(기사)님의 정보가 변경되어 안내드립니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 지니(기사)정보
+- 성함: ${dispatch.jiniName}
+- 차량번호: ${dispatch.carInfo}
+- 연락처: ${dispatch.jiniPhone}
+
+감사합니다.`,
+      getJini: (
+        order: OrderModel,
+        dispatch: DispatchModel
+      ) => `안녕하세요 i.M입니다.
+현장결제 예약 배차정보가 변경되어 안내드립니다.
+- 운임료는 고객 탑승 시 "직접결제"로 결제 해주시기 바랍니다.
+
+▶ 출발일시: ${DateUtils.iso8601DateToStringForMMDDmmss(order.boardingDate)}
+▶ 출발지: ${order.startLocation}
+▶ 도착지: ${order.goalLocation}
+▶ 탑승자 연락처: ${order.customPhone}
+▶ 예약금액: ${dispatch.totalFare}
+- 추가요금 발생시 지급 가능 / 기타요금 발생시 영수증 제출 필수
+▶ 기타:
+
+감사합니다.`,
+    },
   },
 };
 export function SendTxtMessage({ uiType, order, dispatch }: any) {
@@ -1273,13 +1451,49 @@ export function SendTxtMessage({ uiType, order, dispatch }: any) {
                       title={"배차완료"}
                       onClick={() => {
                         let data = "";
-                        if (txtType === 0) {
-                          data = TxtTemplateJson.dispatchComplete.company;
-                        } else if (txtType === 1) {
-                          data = TxtTemplateJson.dispatchComplete.custom;
-                        } else if (txtType === 2) {
-                          data = TxtTemplateJson.dispatchComplete.jini;
+                        const payType = getSelctOptionValue("payType");
+                        if (payType === "카드" || payType === "후불") {
+                          if (txtType === 0) {
+                            data =
+                              TxtTemplateJson.dispatchComplete.card_after.getCompany(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 1) {
+                            data =
+                              TxtTemplateJson.dispatchComplete.card_after.getCustom(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 2) {
+                            data =
+                              TxtTemplateJson.dispatchComplete.card_after.getJini(
+                                order,
+                                dispatch
+                              );
+                          }
+                        } else if (payType === "직접결제") {
+                          if (txtType === 0) {
+                            data =
+                              TxtTemplateJson.dispatchComplete.direct.getCompany(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 1) {
+                            data =
+                              TxtTemplateJson.dispatchComplete.direct.getCustom(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 2) {
+                            data =
+                              TxtTemplateJson.dispatchComplete.direct.getJini(
+                                order,
+                                dispatch
+                              );
+                          }
                         }
+
                         setTxt(data);
                       }}
                     />
@@ -1287,43 +1501,49 @@ export function SendTxtMessage({ uiType, order, dispatch }: any) {
                       title={"배차정보수정"}
                       onClick={() => {
                         let data = "";
-                        if (txtType === 0) {
-                          data =
-                            TxtTemplateJson.dispatchInfomationUpdate.company;
-                        } else if (txtType === 1) {
-                          data =
-                            TxtTemplateJson.dispatchInfomationUpdate.custom;
-                        } else if (txtType === 2) {
-                          data = TxtTemplateJson.dispatchInfomationUpdate.jini;
+                        const payType = getSelctOptionValue("payType");
+                        if (payType === "카드" || payType === "후불") {
+                          if (txtType === 0) {
+                            data =
+                              TxtTemplateJson.dispatchInfomationUpdate.card_after.getCompany(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 1) {
+                            data =
+                              TxtTemplateJson.dispatchInfomationUpdate.card_after.getCustom(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 2) {
+                            data =
+                              TxtTemplateJson.dispatchInfomationUpdate.card_after.getJini(
+                                order,
+                                dispatch
+                              );
+                          }
+                        } else if (payType === "직접결제") {
+                          if (txtType === 0) {
+                            data =
+                              TxtTemplateJson.dispatchInfomationUpdate.direct.getCompany(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 1) {
+                            data =
+                              TxtTemplateJson.dispatchInfomationUpdate.direct.getCustom(
+                                order,
+                                dispatch
+                              );
+                          } else if (txtType === 2) {
+                            data =
+                              TxtTemplateJson.dispatchInfomationUpdate.direct.getJini(
+                                order,
+                                dispatch
+                              );
+                          }
                         }
-                        setTxt(data);
-                      }}
-                    />
-                    <SendMessageButton
-                      title={"배차실패"}
-                      onClick={() => {
-                        let data = "";
-                        if (txtType === 0) {
-                          data = TxtTemplateJson.diapatchCancel.company;
-                        } else if (txtType === 1) {
-                          data = TxtTemplateJson.diapatchCancel.custom;
-                        } else if (txtType === 2) {
-                          data = TxtTemplateJson.diapatchCancel.jini;
-                        }
-                        setTxt(data);
-                      }}
-                    />
-                    <SendMessageButton
-                      title={"배차취소"}
-                      onClick={() => {
-                        let data = "";
-                        if (txtType === 0) {
-                          data = TxtTemplateJson.diapatchFail.company;
-                        } else if (txtType === 1) {
-                          data = TxtTemplateJson.diapatchFail.custom;
-                        } else if (txtType === 2) {
-                          data = TxtTemplateJson.diapatchFail.jini;
-                        }
+
                         setTxt(data);
                       }}
                     />
@@ -1354,11 +1574,11 @@ export function SendTxtMessage({ uiType, order, dispatch }: any) {
                     </button>
                   </div>
                   <div className='flex items-center justify-center p-3 bg-slate-700'>
-                    <div className='p-6 bg-white rounded-lg shadow-lg h-96'>
+                    <div className='h-full p-6 bg-white rounded-lg shadow-lg'>
                       <div className='w-5 h-5 mx-auto mb-4 bg-gray-300 rounded-full'></div>
-                      <div className='h-56 p-4 overflow-y-auto bg-gray-200 rounded-lg'>
+                      <div className='h-full p-4 overflow-y-auto bg-gray-200 rounded-lg'>
                         <textarea
-                          className='p-8 text-lg font-bold rounded-xl w-80'
+                          className='p-8 text-sm rounded-xl w-80 h-96'
                           cols={20}
                           rows={10}
                           value={txt}

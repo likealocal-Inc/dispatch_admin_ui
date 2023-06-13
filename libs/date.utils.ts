@@ -16,7 +16,7 @@ export enum DateAddType {
  * 날짜 및 시간처리 유틸
  */
 export const DateUtils = {
-  iso8601DateToString(isoDateString: string) {
+  iso8601DateToString(isoDateString: string, korean = false) {
     let dateObj = new Date(isoDateString);
 
     let year = dateObj.getFullYear();
@@ -27,7 +27,22 @@ export const DateUtils = {
     let minutes = ("0" + dateObj.getMinutes()).slice(-2);
     let seconds = ("0" + dateObj.getSeconds()).slice(-2);
 
-    return `${year}/${month}/${day} ${hours}:${minutes}`;
+    return korean
+      ? `${year}년${month}월${day}일 ${hours}시${minutes}분`
+      : `${year}/${month}/${day} ${hours}:${minutes}`;
+  },
+  iso8601DateToStringForMMDDmmss(isoDateString: string) {
+    let dateObj = new Date(isoDateString);
+
+    let year = dateObj.getFullYear();
+    let month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+    let day = ("0" + dateObj.getDate()).slice(-2);
+
+    let hours = ("0" + dateObj.getHours()).slice(-2);
+    let minutes = ("0" + dateObj.getMinutes()).slice(-2);
+    let seconds = ("0" + dateObj.getSeconds()).slice(-2);
+
+    return `${month}월${day}일 ${hours}시${minutes}분`;
   },
   stringToDate(str: string) {
     var d = new Date(parseInt(str) * 1000), // Convert the passed timestamp to milliseconds
