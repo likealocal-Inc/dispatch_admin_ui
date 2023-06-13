@@ -20,4 +20,7 @@ export interface DispatchModel {
   payType: string;
   carType: string;
   memo: string;
+
+  userPhone?: string;
+  noData?: boolean;
 }

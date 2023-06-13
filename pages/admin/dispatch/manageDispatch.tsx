@@ -1,64 +1,28 @@
-import {
-  Backdrop,
-  Box,
-  Button,
-  Card,
-  Fade,
-  Modal,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import useCallAPI from "../../../libs/client/hooks/useCallAPI";
-import { UseAPICallResult } from "../../../libs/client/hooks/useCallAPI";
+import { Backdrop, Box, Button, Card, Fade, Modal, Stack } from "@mui/material";
+import useCallAPI from "@libs/client/hooks/useCallAPI";
+import { UseAPICallResult } from "@libs/client/hooks/useCallAPI";
 import { APIURLs } from "@libs/client/constants";
-import {
-  getHTMLElementByID,
-  getSelctOptionValue,
-} from "../../../libs/client/utils/html.utils";
+import { getHTMLElementByID } from "@libs/client/utils/html.utils";
 import { useEffect, useState } from "react";
 import { callAPI } from "@libs/client/call/call";
 import { OrderModel } from "@libs/client/models/order.model";
 import { UserModel } from "@libs/client/models/user.model";
 
 import {
-  BoardingDateComponent,
-  CustomNamePhoneInputUI,
-  CustomNamePhoneShowUI,
   DispatchInfoInput,
   DispatchOrderUI,
-  DispatchProcessInfo,
-  DispatchStartGoalLocationInputUI,
-  DispatchStartGoalLocationShowUI,
-  DispatchStartGoalRouteTimezonInputUI,
-  DispatchStartGoalRouteTimezonShowUI,
-  GapWidthForDispatchInput,
   HeaderUI,
-  IamWebTimeOrderInputBox,
-  InfoBoxWithTitle,
   InfomationComponent,
-  LocationAndAddress,
   MyDaumPostcode,
   OrderTypeUI,
-  SelectBoxStatusList,
+  SendTxtMessage,
+  UIType,
   UserInfomation,
-  onStatusUpdate,
   onSubmitDispatch,
   orderTypeList,
 } from "@libs/client/utils/dispatch.ui.utils";
-import {
-  DispatchUtils,
-  EnumDispatchStatus,
-} from "@libs/client/utils/dispatch.utils";
 import { DispatchModel } from "@libs/client/models/dispatch.model";
-import { DateUtils } from "@libs/date.utils";
 import { ElseUtils } from "@libs/client/utils/else.utils";
-
-export enum UIType {
-  CREATE,
-  MODIFY,
-  DISPATCH,
-}
 
 interface ModalProps {
   uiType: UIType;
@@ -86,17 +50,15 @@ export default function ManageDispatchModal({
     url:
       open && uiType === UIType.MODIFY
         ? APIURLs.ORDER_UPDATE
-        : open && uiType === UIType.CREATE
-        ? APIURLs.ORDER_CREATE
-        : dispatch === undefined || dispatch == null
-        ? APIURLs.DISPATCH_CREATE
-        : APIURLs.DISPATCH_UPDATE,
-    addUrlParams:
-      open && uiType === UIType.MODIFY
-        ? `/${order!.id}`
-        : open && uiType === UIType.DISPATCH && dispatch
-        ? `/${dispatch!.id}`
-        : "",
+        : // : open && uiType === UIType.CREATE
+          APIURLs.ORDER_CREATE,
+    // : dispatch === undefined || dispatch!.noData === true // 데이터가 없으면 생성
+    // ? APIURLs.DISPATCH_CREATE
+    // : APIURLs.DISPATCH_UPDATE,
+    addUrlParams: open && uiType === UIType.MODIFY ? `/${order!.id}` : "",
+    // : open && uiType === UIType.DISPATCH && dispatch
+    // ? `/${dispatch!.id}`
+    // "",
   });
 
   const [message, setMessage] = useState("");
@@ -210,65 +172,6 @@ export default function ManageDispatchModal({
     setInformationForOrder(order!.information);
   }, [order]);
 
-  // 배차정보 입력 저장
-  // const onSubmitDispatch = () => {
-  //   const dispatchStatus = getSelctOptionValue("dispatchStatus");
-
-  //   // 배차 완료가 아닐경우는 데이터 확인이 필요 없음
-  //   // if (dispatchStatus !== EnumDispatchStatus.DISPATCH_COMPLETE) {
-  //   onStatusUpdate(dispatchStatus);
-  //   // } else {
-  //   const carCompany = getHTMLElementByID<HTMLInputElement>("carCompany").value;
-  //   const jiniName = getHTMLElementByID<HTMLInputElement>("jiniName").value;
-  //   const carInfo = getHTMLElementByID<HTMLInputElement>("carInfo").value;
-  //   const jiniPhone = getHTMLElementByID<HTMLInputElement>("jiniPhone").value;
-  //   const _baseFare = getHTMLElementByID<HTMLInputElement>("baseFare").value;
-  //   const _addFare = getHTMLElementByID<HTMLInputElement>("addFare").value;
-  //   const _totalFare = getHTMLElementByID<HTMLInputElement>("totalFare").value;
-
-  //   // 2023.06.09 추가
-  //   const _exceedFare =
-  //     getHTMLElementByID<HTMLInputElement>("exceedFare").value;
-  //   const carType = getSelctOptionValue("carType");
-  //   const payType = getSelctOptionValue("payType");
-  //   const memo = getHTMLElementByID<HTMLTextAreaElement>("memo").value;
-
-  //   const baseFare = _baseFare === "" ? 0 : +_baseFare;
-  //   const addFare = _baseFare === "" ? 0 : +_addFare;
-  //   const totalFare = _baseFare === "" ? 0 : +_totalFare;
-  //   const exceedFare = _baseFare === "" ? 0 : +_exceedFare;
-  //   if (
-  //     carCompany === "" ||
-  //     jiniName === "" ||
-  //     carInfo === "" ||
-  //     jiniPhone === ""
-  //   ) {
-  //     setMessage("모든 데이터를 입력해주세요");
-  //   } else {
-  //     call({
-  //       carCompany,
-  //       jiniName,
-  //       carInfo,
-  //       jiniPhone,
-  //       baseFare,
-  //       addFare,
-  //       totalFare,
-  //       else01: "",
-  //       else02: "",
-  //       else03: "",
-  //       orderId: dispatch ? dispatch.orderId : order!.id,
-  //       dispatchStatus: dispatchStatus === order!.status ? "" : dispatchStatus,
-
-  //       // 2023.06.09 추가
-  //       carType,
-  //       payType,
-  //       memo,
-  //       exceedFare,
-  //     });
-  //     // }
-  //   }
-  // };
-
   // 배차신청 수정, 생성 처리
   const onSubmit = () => {
     let orderTitle;
@@ -351,7 +254,9 @@ export default function ManageDispatchModal({
           customPhone,
         });
       }
-    } else {
+    }
+    // 시간대절 상품일경우
+    else {
       if (orderTitle === "" || boardingDate === null || information === "") {
         setMessage("모든 데이터를 입력해주세요");
       } else {
@@ -369,21 +274,6 @@ export default function ManageDispatchModal({
       }
     }
   };
-
-  // // 상태값 변경
-  // const onStatusUpdate = (status: string) => {
-  //   callAPI({
-  //     urlInfo: APIURLs.ORDER_STATUS_UPDATE,
-  //     addUrlParams: `/${order!.id}/${status}`,
-  //   })
-  //     .then((d) => d.json())
-  //     .then((d) => {
-  //       if (d.ok === true) {
-  //         handleModalClose(true);
-  //         setReloadList(Date.now() * 1);
-  //       }
-  //     });
-  // };
 
   const closeAddressModal = () => {
     setIsStartAddressSearchShow(false);
@@ -426,49 +316,7 @@ export default function ManageDispatchModal({
                   setReloadList={setReloadList}
                   handleModalClose={handleModalClose}
                 />
-                {/* <Typography
-                  id='transition-modal-title'
-                  variant='h6'
-                  component='h2'
-                >
-                  <div
-                    className='flex flex-row items-center justify-center p-2 font-bold text-center text-gray-800'
-                    onClick={closeAddressModal}
-                  >
-                    <div className='pr-10 text-3xl'>
-                      {uiType === UIType.DISPATCH
-                        ? "배차처리"
-                        : uiType === UIType.MODIFY
-                        ? "배차수정"
-                        : "배차생성"}
-                    </div>
 
-                    {
-                      // 수정모드 - 아임웹 - 아직 배차전일 경우 버튼 활성화
-                      uiType === UIType.MODIFY &&
-                      order?.isIamweb &&
-                      order.status ===
-                        EnumDispatchStatus.IAMWEB_ORDER.toString() ? (
-                        <Button
-                          variant='contained'
-                          className='mr-2 font-bold text-black bg-green-500 w-44'
-                          onClick={() =>
-                            onStatusUpdate({
-                              order,
-                              status: EnumDispatchStatus.DISPATCH_REQUEST,
-                              handleModalClose,
-                              setReloadList,
-                            })
-                          }
-                        >
-                          배차요청
-                        </Button>
-                      ) : (
-                        ""
-                      )
-                    }
-                  </div>
-                </Typography> */}
                 {loading && <div>Loading...</div>}
                 <div className=''>
                   <Stack className='flex flex-row'>
@@ -480,40 +328,7 @@ export default function ManageDispatchModal({
                             order={order}
                             setSelectType={setSelectType}
                           />
-                          {/* <div className='flex flex-row items-center w-80'>
-                            <div className='w-24 text-sm'>상품구분</div>
 
-                            {uiType === UIType.DISPATCH || order?.isIamweb ? (
-                              <div className='flex items-center justify-center w-full h-full m-2 rounded-lg bg-slate-300'>
-                                <div className='px-2 text-xs'>
-                                  {order!.orderTitle}
-                                </div>
-                              </div>
-                            ) : (
-                              <select
-                                className='w-full m-3 rounded-lg'
-                                id='orderTitle'
-                                onChange={(v) => {
-                                  setSelectType(v.target.value);
-                                }}
-                              >
-                                {orderTypeList.map((d, k) => (
-                                  <option
-                                    key={k}
-                                    value={d}
-                                    selected={
-                                      uiType === UIType.MODIFY &&
-                                      d === order!.orderTitle
-                                        ? true
-                                        : false
-                                    }
-                                  >
-                                    {d}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                          </div> */}
                           <UserInfomation me={me} />
                         </div>
                         <DispatchOrderUI
@@ -541,6 +356,13 @@ export default function ManageDispatchModal({
                         isIamweb={order?.isIamweb}
                         setInformation={setInformationForOrder}
                       />
+
+                      {/* 문자전송 버튼 */}
+                      <SendTxtMessage
+                        uiType={uiType}
+                        order={order}
+                        dispatch={dispatch}
+                      />
                     </Card>
                     {uiType === UIType.DISPATCH ? (
                       // 배차정보 입력
@@ -555,7 +377,6 @@ export default function ManageDispatchModal({
                             dispatch,
                             order,
                             setMessage,
-                            call,
                             handleModalClose,
                             setReloadList,
                           })

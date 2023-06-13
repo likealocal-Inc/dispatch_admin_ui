@@ -28,4 +28,6 @@ export interface OrderModel {
   customPhone: string;
 
   key: number;
+
+  isJiniSendTxt: boolean; // 지니에게 문자를 보냈는지 여부
 }

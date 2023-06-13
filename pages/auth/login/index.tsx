@@ -99,12 +99,12 @@ const Login: NextPage = () => {
                       />
                     </div>
                   </form>
-                  <div className='flex justify-end'>
+                  {/* <div className='flex justify-end'>
                     <ButtonLinkForPage
                       label='회원가입'
                       pageUrl={PageURLs.JOIN}
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

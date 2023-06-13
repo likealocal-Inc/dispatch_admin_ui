@@ -154,6 +154,11 @@ export const APIURLs = {
     method: METHOD.GET,
     desc: "배차 생성",
   },
+  SEND_TXT: <APIURLType>{
+    url: makeAPIURL("order/send.txt"),
+    method: METHOD.POST,
+    desc: "문자전송",
+  },
 };
 
 /**

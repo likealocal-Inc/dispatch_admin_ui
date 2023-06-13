@@ -2,14 +2,20 @@ import { Button, Card, TextField, Typography } from "@mui/material";
 import DaumPostcode from "react-daum-postcode";
 import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
-import { UIType } from "../../../pages/admin/dispatch/manageDispatch";
-import "react-datepicker/dist/react-datepicker.css";
 import { DispatchUtils, EnumDispatchStatus } from "./dispatch.utils";
 import { callAPI } from "../call/call";
 import { APIURLs } from "../constants";
 import { CompanyModel } from "../models/company.model";
 import { getHTMLElementByID, getSelctOptionValue } from "./html.utils";
 import { DateUtils } from "@libs/date.utils";
+import "react-datepicker/dist/react-datepicker.css";
+import { number } from "prop-types";
+
+export enum UIType {
+  CREATE,
+  MODIFY,
+  DISPATCH,
+}
 
 const airportList = ["인천1공항", "인천2공항", "김포공항"];
 export const airportSelectTag = (id: string, isSelect?: string) => {
@@ -552,13 +558,14 @@ export function DispatchInfoInput({
             </div>
             <div className='flex flex-col p-1'>
               <div className='p-2'>메모</div>
-              <TextField
-                multiline
-                minRows={3}
-                maxRows={3}
-                defaultValue={dispatch?.memo}
+              <textarea
+                name='memo'
                 id='memo'
-              />
+                cols={10}
+                rows={10}
+                defaultValue={dispatch ? dispatch.memo : ""}
+                className='w-full h-48 rounded-lg'
+              ></textarea>
             </div>
           </div>
         </div>
@@ -627,20 +634,21 @@ export function onSubmitDispatch({
   dispatch,
   order,
   setMessage,
-  call,
   handleModalClose,
   setReloadList,
 }: any) {
   const dispatchStatus = getSelctOptionValue("dispatchStatus");
 
   // 배차 완료가 아닐경우는 데이터 확인이 필요 없음
-  // if (dispatchStatus !== EnumDispatchStatus.DISPATCH_COMPLETE) {
-  onStatusUpdate({
-    order,
-    status: dispatchStatus,
-    handleModalClose,
-    setReloadList,
-  });
+  if (dispatchStatus !== order.status) {
+    onStatusUpdate({
+      order,
+      status: dispatchStatus,
+      handleModalClose,
+      setReloadList,
+    });
+  }
+
   // } else {
   const carCompany = getHTMLElementByID<HTMLInputElement>("carCompany").value;
   const jiniName = getHTMLElementByID<HTMLInputElement>("jiniName").value;
@@ -657,39 +665,133 @@ export function onSubmitDispatch({
   const memo = getHTMLElementByID<HTMLTextAreaElement>("memo").value;
 
   const baseFare = _baseFare === "" ? 0 : +_baseFare;
-  const addFare = _baseFare === "" ? 0 : +_addFare;
-  const totalFare = _baseFare === "" ? 0 : +_totalFare;
-  const exceedFare = _baseFare === "" ? 0 : +_exceedFare;
-  if (
-    carCompany === "" ||
-    jiniName === "" ||
-    carInfo === "" ||
-    jiniPhone === ""
-  ) {
-    setMessage("모든 데이터를 입력해주세요");
-  } else {
-    call({
-      carCompany,
-      jiniName,
-      carInfo,
-      jiniPhone,
-      baseFare,
-      addFare,
-      totalFare,
-      else01: "",
-      else02: "",
-      else03: "",
-      orderId: dispatch ? dispatch.orderId : order!.id,
-      dispatchStatus: dispatchStatus === order!.status ? "" : dispatchStatus,
+  const addFare = _addFare === "" ? 0 : +_addFare;
+  const totalFare = _totalFare === "" ? 0 : +_totalFare;
+  const exceedFare = _exceedFare === "" ? 0 : +_exceedFare;
 
-      // 2023.06.09 추가
-      carType,
-      payType,
-      memo,
-      exceedFare,
-    });
-    // }
+  if (dispatch.noData === true) {
+    dispatch.carCompany = "";
+    dispatch.jiniName = "";
+    dispatch.carInfo = "";
+    dispatch.jiniPhone = "";
+    dispatch.carType = "블랙";
+    dispatch.payType = "카드";
+    dispatch.memo = "";
+    dispatch.baseFare = 0;
+    dispatch.addFare = 0;
+    dispatch.totalFare = 0;
+    dispatch.exceedFare = 0;
   }
+
+  // console.log(
+  //   carCompany,
+  //   jiniName,
+  //   carInfo,
+  //   jiniPhone,
+  //   carType,
+  //   payType,
+  //   memo,
+  //   baseFare,
+  //   addFare,
+  //   totalFare,
+  //   exceedFare
+  // );
+  // console.log(
+  //   dispatch.carCompany,
+  //   dispatch.jiniName,
+  //   dispatch.carInfo,
+  //   dispatch.jiniPhone,
+  //   dispatch.carType,
+  //   dispatch.payType,
+  //   dispatch.memo,
+  //   dispatch.baseFare,
+  //   dispatch.addFare,
+  //   dispatch.totalFare,
+  //   dispatch.exceedFare
+  // );
+
+  if (
+    dispatch.carCompany !== carCompany ||
+    dispatch.jiniName !== jiniName ||
+    dispatch.carInfo !== carInfo ||
+    dispatch.jiniPhone !== jiniPhone ||
+    dispatch.carType !== carType ||
+    dispatch.payType !== payType ||
+    dispatch.memo !== memo ||
+    dispatch.baseFare !== baseFare ||
+    dispatch.addFare !== addFare ||
+    dispatch.totalFare !== totalFare ||
+    dispatch.exceedFare !== exceedFare
+  ) {
+    console.log(dispatch);
+    console.log(order);
+
+    if (dispatch.noData === true) {
+      callAPI({
+        urlInfo: APIURLs.DISPATCH_CREATE,
+        params: {
+          carCompany,
+          jiniName,
+          carInfo,
+          jiniPhone,
+          baseFare,
+          addFare,
+          totalFare,
+          else01: "",
+          else02: "",
+          else03: "",
+          orderId: order!.id,
+          dispatchStatus:
+            dispatchStatus === order!.status ? "" : dispatchStatus,
+
+          // 2023.06.09 추가
+          carType,
+          payType,
+          memo,
+          exceedFare,
+        },
+      })
+        .then((d) => d.json())
+        .then((d) => {
+          handleModalClose(true);
+          setReloadList(Date.now() * 1);
+        });
+    } else {
+      callAPI({
+        urlInfo: APIURLs.DISPATCH_UPDATE,
+        addUrlParams: `/${dispatch!.id}`,
+        params: {
+          carCompany,
+          jiniName,
+          carInfo,
+          jiniPhone,
+          baseFare,
+          addFare,
+          totalFare,
+          else01: "",
+          else02: "",
+          else03: "",
+          orderId: order!.id,
+          dispatchStatus:
+            dispatchStatus === order!.status ? "" : dispatchStatus,
+          // 2023.06.09 추가
+          carType,
+          payType,
+          memo,
+          exceedFare,
+        },
+      })
+        .then((d) => d.json())
+        .then((d) => {
+          handleModalClose(true);
+          setReloadList(Date.now() * 1);
+        });
+    }
+  } else {
+    alert("변경된 데이터가 없음");
+    return;
+  }
+  // }
 }
 
 // 배차처리에 출발지명, 출발지주소, 도착지, 도착지 주소 출력
@@ -867,6 +969,34 @@ export function HeaderUI({
               >
                 배차요청
               </Button>
+            ) : // 수정모드 - 완료, 배차취소가 아닌것은 배차요청취소
+            uiType === UIType.MODIFY &&
+              order.status !== EnumDispatchStatus.DONE &&
+              order.status !== EnumDispatchStatus.DISPATCH_REQUEST_CANCEL &&
+              order.status !== EnumDispatchStatus.DISPATCH_CANCEL ? (
+              <Button
+                variant='contained'
+                className='mr-2 font-bold text-black bg-green-500 w-44'
+                onClick={() =>
+                  onStatusUpdate({
+                    order,
+                    status: EnumDispatchStatus.DISPATCH_REQUEST_CANCEL, // 배차요쳥 취소
+                    handleModalClose,
+                    setReloadList,
+                  })
+                }
+              >
+                배차요청 취소
+              </Button>
+            ) : // 배차요청 취소일 경우 취소한 시간을 보여줌
+            order.status === EnumDispatchStatus.DISPATCH_REQUEST_CANCEL ? (
+              <>
+                {order.else02 === ""
+                  ? ""
+                  : `[배차요청취소시간: ${
+                      JSON.parse(order.else02)["dispatch_cancel_time"]
+                    })`}
+              </>
             ) : (
               ""
             )
@@ -1002,6 +1132,267 @@ export function DispatchOrderUI({
           </>
         )}
       </div>
+    </>
+  );
+}
+
+function SendMessageButton({ title, onClick }: any) {
+  return (
+    <>
+      <Button
+        variant='contained'
+        className='w-full m-2 text-black bg-green-500 hover:bg-green-900 hover:text-white'
+        onClick={onClick}
+      >
+        {title}
+      </Button>
+    </>
+  );
+}
+
+// 문자 전송 텐플릿
+const TxtTemplateJson = {
+  dispatchComplete: {
+    company: "‘(회사명)/(주문번호)’ 건의 배차가 완료되었습니다.",
+    custom: "‘인사말’ + 배차정보",
+    jini: "‘인사말’ + 고객정보",
+  },
+  dispatchInfomationUpdate: {
+    company: "‘(회사명)/(주문번호)’ 건의 배차정보가 수정되었습니다.",
+    custom: "‘인사말’ + 배차정보수정",
+    jini: "‘인사말’ + 고객정보수정",
+  },
+  diapatchCancel: {
+    company: "‘(회사명)/(주문번호)’ 건의 배차가 취소되었습니다.",
+    custom: "‘인사말’ + 배차취소",
+    jini: "‘인사말’ + 배차취소",
+  },
+  diapatchFail: {
+    company: "‘(회사명)/(주문번호)’ 건의 배차가 실패되었습니다.",
+    custom: "‘인사말’ + 배차실패",
+    jini: "‘인사말’ + 배차실패",
+  },
+};
+export function SendTxtMessage({ uiType, order, dispatch }: any) {
+  const [openTextModal, setOpenTextModal] = useState(false);
+  const [txtType, setTxtType] = useState(0);
+  const [txt, setTxt] = useState("");
+  const [phones, setPhones] = useState("");
+
+  const setModal = (type: number) => {
+    setOpenTextModal(true);
+    setTxtType(type);
+
+    if (type === 0) {
+      setPhones(dispatch.userPhone);
+    } else if (type === 1) {
+      setPhones(order.customPhone);
+    } else if (type === 2) {
+      setPhones(dispatch.jiniPhone);
+    }
+  };
+
+  // 완료처리
+  const setDone = () => {
+    setOpenTextModal(false);
+    setTxt("");
+  };
+
+  const sendTxt = () => {
+    if (phones!.trim() === "" || txt!.trim() === "") {
+      alert("전화번호 및 내용을 입력해주세요");
+      return;
+    }
+    callAPI({
+      urlInfo: APIURLs.SEND_TXT,
+      params: {
+        phones,
+        txt,
+        orderId: order.id,
+        isJini: txtType === 2 ? true : false, // 지니일경우 true
+      },
+    })
+      .then((d) => d.json())
+      .then((d) => {
+        if (d.ok) {
+          alert("문자전송성공");
+          setDone();
+        } else {
+          alert("문자전송 실패 - 관리자에게 문의 " + d);
+          setDone();
+        }
+      });
+  };
+  return (
+    <>
+      {uiType === UIType.DISPATCH ? (
+        <div className='mt-14'>
+          <div className='mt-2 bg-slate-200'>
+            <div className='pt-2 text-lg font-bold text-center'>문자전송</div>
+            <div className='flex flex-row'>
+              <SendMessageButton title={"제휴사"} onClick={() => setModal(0)} />
+              {order.isIamweb ? (
+                ""
+              ) : (
+                <SendMessageButton
+                  title={"탑승자"}
+                  onClick={() => setModal(1)}
+                />
+              )}
+              {/* 지니 버튼은 지니 전화번호가 있을때만 노출 */}
+              {dispatch !== undefined &&
+              dispatch.jiniPhone !== undefined &&
+              dispatch.jiniPhone !== "" ? (
+                <>
+                  <SendMessageButton
+                    title={"지니"}
+                    onClick={() => setModal(2)}
+                  />
+                </>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+          <div
+            className={
+              openTextModal === false
+                ? "hidden"
+                : `fixed inset-0 items-center justify-center `
+            }
+          >
+            {/* 문자전송 모달 */}
+            <div className='w-full h-full p-20 bg-slate-900 bg-opacity-80'>
+              <div className='flex flex-row w-4/6 p-16 ml-64 bg-slate-200 rounded-2xl'>
+                <div className='flex flex-col items-center mt-10 mr-10'>
+                  <h2 className='mb-4 text-xl font-bold '>전송템플릿타입</h2>
+                  <div className='w-52'>
+                    <SendMessageButton
+                      title={"배차완료"}
+                      onClick={() => {
+                        let data = "";
+                        if (txtType === 0) {
+                          data = TxtTemplateJson.dispatchComplete.company;
+                        } else if (txtType === 1) {
+                          data = TxtTemplateJson.dispatchComplete.custom;
+                        } else if (txtType === 2) {
+                          data = TxtTemplateJson.dispatchComplete.jini;
+                        }
+                        setTxt(data);
+                      }}
+                    />
+                    <SendMessageButton
+                      title={"배차정보수정"}
+                      onClick={() => {
+                        let data = "";
+                        if (txtType === 0) {
+                          data =
+                            TxtTemplateJson.dispatchInfomationUpdate.company;
+                        } else if (txtType === 1) {
+                          data =
+                            TxtTemplateJson.dispatchInfomationUpdate.custom;
+                        } else if (txtType === 2) {
+                          data = TxtTemplateJson.dispatchInfomationUpdate.jini;
+                        }
+                        setTxt(data);
+                      }}
+                    />
+                    <SendMessageButton
+                      title={"배차실패"}
+                      onClick={() => {
+                        let data = "";
+                        if (txtType === 0) {
+                          data = TxtTemplateJson.diapatchCancel.company;
+                        } else if (txtType === 1) {
+                          data = TxtTemplateJson.diapatchCancel.custom;
+                        } else if (txtType === 2) {
+                          data = TxtTemplateJson.diapatchCancel.jini;
+                        }
+                        setTxt(data);
+                      }}
+                    />
+                    <SendMessageButton
+                      title={"배차취소"}
+                      onClick={() => {
+                        let data = "";
+                        if (txtType === 0) {
+                          data = TxtTemplateJson.diapatchFail.company;
+                        } else if (txtType === 1) {
+                          data = TxtTemplateJson.diapatchFail.custom;
+                        } else if (txtType === 2) {
+                          data = TxtTemplateJson.diapatchFail.jini;
+                        }
+                        setTxt(data);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className='w-ful'>
+                  <div className='relative'>
+                    <button
+                      className='absolute p-2 mt-4 mr-4 bg-orange-500 rounded-full right-1 top-1 hover:bg-red-600 focus:outline-none'
+                      onClick={() => {
+                        setDone();
+                      }}
+                    >
+                      <svg
+                        className='w-4 h-4 font-bold text-slate-100'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          stroke-linecap='round'
+                          stroke-linejoin='round'
+                          stroke-width='2'
+                          d='M6 18L18 6M6 6l12 12'
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className='flex items-center justify-center p-3 bg-slate-700'>
+                    <div className='p-6 bg-white rounded-lg shadow-lg h-96'>
+                      <div className='w-5 h-5 mx-auto mb-4 bg-gray-300 rounded-full'></div>
+                      <div className='h-56 p-4 overflow-y-auto bg-gray-200 rounded-lg'>
+                        <textarea
+                          className='p-8 text-lg font-bold rounded-xl w-80'
+                          cols={20}
+                          rows={10}
+                          value={txt}
+                          onChange={(e) => {
+                            setTxt(e.target.value);
+                          }}
+                        />
+                      </div>
+                      <div className='flex mt-4'>
+                        <input
+                          type='text'
+                          className='flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500'
+                          defaultValue={phones}
+                          onChange={(e) => {
+                            setPhones(e.target.value);
+                          }}
+                        />
+                        <button
+                          className='px-4 py-2 text-white bg-blue-500 rounded-r-lg hover:bg-blue-600 focus:outline-none'
+                          onClick={() => {
+                            sendTxt();
+                          }}
+                        >
+                          Send
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
     </>
   );
 }

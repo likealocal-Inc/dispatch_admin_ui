@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 
-import { APIURLs, localstorageObj } from "@libs/client/constants";
+import { APIURLs } from "@libs/client/constants";
 import { StyledTableCell, StyledTableRow } from "@libs/client/ui/table";
 import { MessageProps } from "@components/MessageShow/show";
 import TableTemplate from "@components/ListTable/TableTemplate";
@@ -11,10 +11,11 @@ import {
   EnumDispatchStatus,
 } from "@libs/client/utils/dispatch.utils";
 import { OrderModel } from "@libs/client/models/order.model";
-import ManageDispatchModal, { UIType } from "./manageDispatch";
 import AdminLayout from "@components/layouts/AdminLayout";
 import { UserModel } from "@libs/client/models/user.model";
 import { ElseUtils } from "@libs/client/utils/else.utils";
+import { UIType } from "@libs/client/utils/dispatch.ui.utils";
+import ManageDispatchModal from "./manageDispatch";
 
 export default function Orders() {
   const [reloadList, setReloadList] = useState(0);
@@ -78,7 +79,7 @@ export default function Orders() {
     user?.role !== "USER" ? "배차처리" : "배차내용",
   ];
 
-  const headerWidths = [8, 10, 7, 10, 12, 5, 10, 7, 5, 10, 10, 10];
+  const headerWidths = [10, 10, 7, 10, 12, 5, 10, 7, 5, 10, 10, 10];
 
   const body = (res: OrderModel[]) => {
     return (
@@ -105,7 +106,12 @@ export default function Orders() {
                     <button
                       onClick={() => onModifyOpen(d)}
                       type='button'
-                      className='inline-block px-6 py-2.5 bg-gray-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-lg transition duration-150 ease-in-out w-full'
+                      className={
+                        `inline-block px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md  focus:shadow-lg focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out w-full ` +
+                        (d.status === EnumDispatchStatus.DISPATCH_MODIFIED
+                          ? " bg-orange-600 hover:bg-orange-700"
+                          : " bg-gray-600 hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 active:bg-gray-800")
+                      }
                     >
                       {DispatchUtils.getStatusString(d.status)}
                     </button>
@@ -114,7 +120,14 @@ export default function Orders() {
               </div>
             </StyledTableCell>
             <StyledTableCell component='th' scope='row'>
-              <div className='flex justify-center font-bold text-slate-600'>
+              <div
+                className={
+                  `flex justify-center font-bold ` +
+                  (d.isJiniSendTxt === true
+                    ? "text-white text-xl bg-pink-700 p-2 rounded-2xl"
+                    : "text-slate-600")
+                }
+              >
                 {d.company}-{d.key}
               </div>
             </StyledTableCell>
