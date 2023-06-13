@@ -445,11 +445,19 @@ export function DispatchInfoInput({
               <div className='flex flex-row items-center w-56'>
                 <div className='w-28'>상태값</div>
                 {isModify ? (
-                  <SelectBoxStatusList
-                    id='dispatchStatus'
-                    selectStatus={order?.status}
-                    onChange={(d: any) => {}}
-                  />
+                  order.status === EnumDispatchStatus.DONE ? (
+                    <>
+                      <div className='w-full p-2 text-center border-2 border-dashed rounded-lg border-slate-400'>
+                        {DispatchUtils.status.get(order.status)}
+                      </div>
+                    </>
+                  ) : (
+                    <SelectBoxStatusList
+                      id='dispatchStatus'
+                      selectStatus={order?.status}
+                      onChange={(d: any) => {}}
+                    />
+                  )
                 ) : (
                   <>
                     <div className='w-full p-2 border-2 rounded-lg'>
@@ -993,7 +1001,8 @@ export function HeaderUI({
                 배차요청 취소
               </Button>
             ) : // 배차요청 취소일 경우 취소한 시간을 보여줌
-            order.status === EnumDispatchStatus.DISPATCH_REQUEST_CANCEL ? (
+            order !== undefined &&
+              order.status === EnumDispatchStatus.DISPATCH_REQUEST_CANCEL ? (
               <>
                 {order.else02 === ""
                   ? ""
@@ -1445,7 +1454,15 @@ export function SendTxtMessage({ uiType, order, dispatch }: any) {
             <div className='w-full h-full p-20 bg-slate-900 bg-opacity-80'>
               <div className='flex flex-row w-4/6 p-16 ml-64 bg-slate-200 rounded-2xl'>
                 <div className='flex flex-col items-center mt-10 mr-10'>
-                  <h2 className='mb-4 text-xl font-bold '>전송템플릿타입</h2>
+                  <h2 className='mb-4 text-xl font-bold '>
+                    전송템플릿타입[
+                    {txtType === 0
+                      ? " 제휴사 "
+                      : txtType === 1
+                      ? " 탑승자 "
+                      : " 지니 "}
+                    ]
+                  </h2>
                   <div className='w-52'>
                     <SendMessageButton
                       title={"배차완료"}

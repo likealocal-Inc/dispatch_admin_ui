@@ -98,24 +98,24 @@ export default function Orders() {
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center font-bold text-red-600'>
                 <div className='flex justify-center'>
-                  {user?.role === "ADMIN" ? (
+                  {/* {user?.role === "ADMIN" ? (
                     <div className='w-full'>
                       {DispatchUtils.getStatusString(d.status)}
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => onModifyOpen(d)}
-                      type='button'
-                      className={
-                        `inline-block px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md  focus:shadow-lg focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out w-full ` +
-                        (d.status === EnumDispatchStatus.DISPATCH_MODIFIED
-                          ? " bg-orange-600 hover:bg-orange-700"
-                          : " bg-gray-600 hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 active:bg-gray-800")
-                      }
-                    >
-                      {DispatchUtils.getStatusString(d.status)}
-                    </button>
-                  )}
+                  ) : ( */}
+                  <button
+                    onClick={() => onModifyOpen(d)}
+                    type='button'
+                    className={
+                      `inline-block px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md  focus:shadow-lg focus:outline-none focus:ring-0  active:shadow-lg transition duration-150 ease-in-out w-full ` +
+                      (d.status === EnumDispatchStatus.DISPATCH_MODIFIED
+                        ? " bg-orange-600 hover:bg-orange-700"
+                        : " bg-gray-600 hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 active:bg-gray-800")
+                    }
+                  >
+                    {DispatchUtils.getStatusString(d.status)}
+                  </button>
+                  {/* )} */}
                 </div>
               </div>
             </StyledTableCell>
