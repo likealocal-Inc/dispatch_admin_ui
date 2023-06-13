@@ -547,7 +547,7 @@ export function DispatchInfoInput({
                   value='직접결제'
                   selected={dispatch?.payType === "직접결제" ? true : false}
                 >
-                  현금
+                  직접결제
                 </option>
                 <option
                   value='후불'
