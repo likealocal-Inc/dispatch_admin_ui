@@ -46,9 +46,8 @@ export default function Users() {
     "수정일",
     "권한",
     "활성화",
-    "삭제",
   ];
-  const headerWidths = [10, 10, 20, 20, 20, 5, 5, 20];
+  const headerWidths = [10, 10, 20, 20, 20, 5, 5];
   const body = (res: UserModel[]) => {
     return (
       res &&
@@ -127,7 +126,7 @@ export default function Users() {
                 </label>
               </div>
             </StyledTableCell>
-            <StyledTableCell component='th' scope='row'>
+            {/* <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center'>
                 <Button02
                   label={"삭제"}
@@ -144,7 +143,7 @@ export default function Users() {
                   }}
                 />
               </div>
-            </StyledTableCell>
+            </StyledTableCell> */}
           </StyledTableRow>
         );
       })

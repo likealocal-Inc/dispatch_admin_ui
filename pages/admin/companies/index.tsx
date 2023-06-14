@@ -40,8 +40,8 @@ export default function Users() {
     if (isChange) setReload(reload + 1);
   };
 
-  const headers = ["name", "생성일", "수정일", "활성화", "삭제"];
-  const headerWidths = [10, 20, 20, 10, 10];
+  const headers = ["name", "생성일", "수정일", "활성화"];
+  const headerWidths = [10, 20, 20, 10];
   const body = (res: CompanyModel[]) => {
     return (
       res &&
@@ -106,7 +106,7 @@ export default function Users() {
                 </label>
               </div>
             </StyledTableCell>
-            <StyledTableCell component='th' scope='row' className='text-center'>
+            {/* <StyledTableCell component='th' scope='row' className='text-center'>
               <div className='flex justify-center'>
                 <Button02
                   label={"삭제"}
@@ -120,7 +120,7 @@ export default function Users() {
                   }}
                 />
               </div>
-            </StyledTableCell>
+            </StyledTableCell> */}
           </StyledTableRow>
         );
       })
