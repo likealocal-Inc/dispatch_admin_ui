@@ -994,8 +994,7 @@ export function HeaderUI({
                 배차요청 취소
               </Button>
             ) : // 배차요청 취소일 경우 취소한 시간을 보여줌
-            order !== undefined &&
-              order.status === EnumDispatchStatus.DISPATCH_REQUEST_CANCEL ? (
+            order !== undefined ? (
               <>
                 {order.else02 === ""
                   ? ""
