@@ -298,7 +298,7 @@ export function DispatchProcessInfo({
             type={isNumber ? "number" : "text"}
           />
         ) : (
-          <div className='w-full p-2 border-2 border-dashed rounded-lg'>
+          <div className='w-full p-2 border-2 border-dashed rounded-lg h-9'>
             {val}
           </div>
         )}
@@ -338,7 +338,7 @@ export function DispatchProcessInfoPrice({
             }}
           />
         ) : (
-          <div className='w-full p-2 border-2 border-dashed rounded-lg'>
+          <div className='w-full p-2 border-2 border-dashed rounded-lg h-9'>
             {val}
           </div>
         )}
@@ -376,7 +376,7 @@ export function DispatchProcessInfoTotalPrice({
             // }}
           />
         ) : (
-          <div className='w-full p-2 border-2 border-dashed rounded-lg'>
+          <div className='w-full p-2 border-2 border-dashed rounded-lg h-9'>
             {value}
           </div>
         )}

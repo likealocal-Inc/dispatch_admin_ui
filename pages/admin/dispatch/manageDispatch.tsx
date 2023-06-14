@@ -351,11 +351,17 @@ export default function ManageDispatchModal({
                       />
 
                       {/* 문자전송 버튼 */}
-                      <SendTxtMessage
-                        uiType={uiType}
-                        order={order}
-                        dispatch={dispatch}
-                      />
+                      {me?.role !== "USER" ? (
+                        <>
+                          <SendTxtMessage
+                            uiType={uiType}
+                            order={order}
+                            dispatch={dispatch}
+                          />
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </Card>
                     {uiType === UIType.DISPATCH ? (
                       // 배차정보 입력

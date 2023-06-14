@@ -24,7 +24,7 @@ export const DispatchUtils = {
   status: new Map<string, string>([
     [EnumDispatchStatus.IAMWEB_ORDER.toString(), "아임웹주문"],
     [EnumDispatchStatus.DISPATCH_REQUEST.toString(), "배차요청"],
-    [EnumDispatchStatus.DISPATCH_MODIFIED.toString(), "배차수정함"],
+    [EnumDispatchStatus.DISPATCH_MODIFIED.toString(), "배차변경"],
     [EnumDispatchStatus.DISPATCH_REQUEST_CANCEL.toString(), "배차요청취소"],
     [EnumDispatchStatus.DISPATCH_ING.toString(), "확인중"],
     [EnumDispatchStatus.DISPATCH_COMPLETE.toString(), "배차완료"],

@@ -65,7 +65,7 @@ export default function Orders() {
   };
 
   const headers = [
-    "배차상태",
+    "상태",
     "주문ID",
     "주문일시",
     "주문상품",
