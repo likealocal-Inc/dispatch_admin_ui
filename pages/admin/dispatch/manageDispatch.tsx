@@ -94,7 +94,6 @@ export default function ManageDispatchModal({
       addUrlParams: `/${order?.userId}`,
     }).then((d) => d.json());
     user.then((d) => {
-      setMe(d.data);
       setStartDate(new Date(order!.boardingDate));
       setSelectType(order!.orderTitle);
       setStartAddress(order!.startAddress);
