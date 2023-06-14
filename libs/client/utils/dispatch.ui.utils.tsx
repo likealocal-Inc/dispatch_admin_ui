@@ -307,6 +307,84 @@ export function DispatchProcessInfo({
   );
 }
 
+export function DispatchProcessInfoPrice({
+  title,
+  value,
+  id,
+  total,
+  setTotal,
+  isModify = true,
+}: any) {
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
+
+  return (
+    <div className='flex flex-row items-center w-56'>
+      <div className='w-24'>{title}</div>
+      <div className='w-full m-1'>
+        {isModify ? (
+          <input
+            id={id}
+            value={val}
+            className='w-full p-2 border-dashed rounded-lg '
+            type='number'
+            onChange={(e) => {
+              const v = +e.target.value;
+              setTotal(total + v - val);
+              setVal(+e.target.value);
+            }}
+          />
+        ) : (
+          <div className='w-full p-2 border-2 border-dashed rounded-lg'>
+            {val}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function DispatchProcessInfoTotalPrice({
+  title,
+  value,
+  setValue,
+  id,
+  isModify = true,
+}: any) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
+
+  return (
+    <div className='flex flex-row items-center w-56'>
+      <div className='w-24'>{title}</div>
+      <div className='w-full m-1'>
+        {isModify ? (
+          <input
+            disabled
+            id={id}
+            value={val}
+            className='w-full p-2 border-dashed rounded-lg '
+            type='number'
+            // onChange={(e) => {
+            //   const res = +e.target.value - val;
+            //   setValue(value + res);
+            // }}
+          />
+        ) : (
+          <div className='w-full p-2 border-2 border-dashed rounded-lg'>
+            {value}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // 회사 리트스
 export function SelectBoxCompanyList({
   id,
@@ -430,6 +508,14 @@ export function DispatchInfoInput({
   handleModalClose,
   onSubmitDispatch,
 }: any) {
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    if (dispatch !== undefined) {
+      setTotalPrice(dispatch.totalFare);
+    }
+  }, [dispatch]);
+
   return (
     <>
       <Card className='p-1 w-[500px] pb-5 ml-3 rounded-lg'>
@@ -502,36 +588,39 @@ export function DispatchInfoInput({
               </select>
             </div>
             <div className='flex flex-row'>
-              <DispatchProcessInfo
+              <DispatchProcessInfoPrice
                 title='기본요금'
                 id='baseFare'
                 value={dispatch ? dispatch.baseFare : 0}
-                isNumber={true}
+                total={totalPrice}
+                setTotal={setTotalPrice}
                 isModify={isModify}
               />
               <GapWidthForDispatchInput />
-              <DispatchProcessInfo
+              <DispatchProcessInfoPrice
                 title='추가요금'
                 id='addFare'
                 value={dispatch ? dispatch.addFare : 0}
-                isNumber={true}
+                total={totalPrice}
+                setTotal={setTotalPrice}
                 isModify={isModify}
               />
             </div>
             <div className='flex flex-row'>
-              <DispatchProcessInfo
+              <DispatchProcessInfoPrice
                 title='초과요금'
                 id='exceedFare'
                 value={dispatch ? dispatch.exceedFare : 0}
-                isNumber={true}
+                total={totalPrice}
+                setTotal={setTotalPrice}
                 isModify={isModify}
               />
               <GapWidthForDispatchInput />
-              <DispatchProcessInfo
+              <DispatchProcessInfoTotalPrice
                 title='요금총합'
                 id='totalFare'
-                value={dispatch ? dispatch.totalFare : 0}
-                isNumber={true}
+                value={totalPrice}
+                setValue={setTotalPrice}
                 isModify={isModify}
               />
             </div>
