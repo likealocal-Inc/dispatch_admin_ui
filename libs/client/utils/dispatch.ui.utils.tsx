@@ -373,6 +373,7 @@ export function SelectBoxStatusList({
       onChange={(e) => {
         onChange(e.target.value);
       }}
+      disabled={selectStatus === EnumDispatchStatus.DONE ? true : false}
     >
       {isSearch === true ? (
         <option key={"0"} value='ALL'>
@@ -445,19 +446,11 @@ export function DispatchInfoInput({
               <div className='flex flex-row items-center w-56'>
                 <div className='w-28'>상태값</div>
                 {isModify ? (
-                  order.status === EnumDispatchStatus.DONE ? (
-                    <>
-                      <div className='w-full p-2 text-center border-2 border-dashed rounded-lg border-slate-400'>
-                        {DispatchUtils.status.get(order.status)}
-                      </div>
-                    </>
-                  ) : (
-                    <SelectBoxStatusList
-                      id='dispatchStatus'
-                      selectStatus={order?.status}
-                      onChange={(d: any) => {}}
-                    />
-                  )
+                  <SelectBoxStatusList
+                    id='dispatchStatus'
+                    selectStatus={order?.status}
+                    onChange={(d: any) => {}}
+                  />
                 ) : (
                   <>
                     <div className='w-full p-2 border-2 rounded-lg'>

@@ -124,7 +124,7 @@ export default function Orders() {
                 className={
                   `flex justify-center font-bold ` +
                   (d.isJiniSendTxt === true
-                    ? "text-white text-xl bg-pink-700 p-2 rounded-2xl"
+                    ? "text-white text-sm bg-pink-700 p-2 rounded-2xl"
                     : "text-slate-600")
                 }
               >
