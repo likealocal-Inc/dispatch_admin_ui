@@ -292,7 +292,7 @@ export function InfomationComponent({
                   {updateData !== undefined && updateData.information !== "" ? (
                     <>
                       <div className='w-full h-full p-3 ml-2 whitespace-pre bg-orange-100 rounded-lg'>
-                        updateData.information
+                        {updateData.information}
                       </div>
                     </>
                   ) : (
