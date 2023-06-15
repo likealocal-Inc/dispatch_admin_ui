@@ -209,9 +209,9 @@ export function InfomationComponent({
                       return (
                         <div
                           key={d}
-                          className='flex flex-row justify-between w-full'
+                          className='flex flex-row justify-between w-96'
                         >
-                          <div className='p-2 m-1 text-sm rounded-lg w-96 bg-slate-200'>
+                          <div className='w-3/6 p-2 m-1 text-sm rounded-lg bg-slate-200'>
                             {d === "비행편" ? (
                               <a
                                 href={url}
@@ -228,7 +228,7 @@ export function InfomationComponent({
                           {
                             // 배차처리 -> 출력만함
                             uiType === UIType.DISPATCH ? (
-                              <div className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'>
+                              <div className='w-3/5 p-2 m-1 text-sm bg-white border-2 rounded-lg'>
                                 {infoDataJson[d]}
                               </div>
                             ) : (
