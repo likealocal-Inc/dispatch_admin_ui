@@ -36,15 +36,31 @@ export const airportSelectTag = (id: string, isSelect?: string) => {
 export function InfoBox({ info }: any) {
   return (
     <div className='flex items-center justify-center w-full h-full px-4 m-2 rounded-lg bg-slate-300'>
-      <div className='text-sm'>{info}</div>
+      <div
+        className='text-sm'
+        dangerouslySetInnerHTML={{
+          __html: `${info}`,
+        }}
+      ></div>
     </div>
   );
 }
-export function InfoBoxWithTitle({ title, info }: any) {
+export function InfoBoxWithTitle({ title, info, updateData = "" }: any) {
   return (
-    <div className='flex flex-row items-center my-1 w-80'>
-      <div className='w-24 text-sm'>{title}</div>
-      <InfoBox info={info} />
+    <div className={`flex flex-row items-center my-1 w-80`}>
+      <div
+        className={
+          `w-24 text-sm ` +
+          (updateData !== "" ? "text-orange-600 font-bold " : "")
+        }
+      >
+        {title}
+      </div>
+      <InfoBox
+        info={
+          `${info}` + (updateData !== "" ? `<br/>[<b>${updateData}</b>]` : "")
+        }
+      />
     </div>
   );
 }
@@ -145,6 +161,7 @@ export function InfomationComponent({
   information,
   isIamweb,
   setInformation,
+  updateData,
 }: any) {
   const [infoDataJson, setInfoDataJson] = useState<any>();
 
@@ -167,63 +184,120 @@ export function InfomationComponent({
   return (
     <>
       <div className='flex flex-row items-center w-full'>
-        <div className='text-sm w-28'>전달사항</div>
+        <div
+          className={
+            `w-28 text-sm ` +
+            (uiType === UIType.DISPATCH &&
+            updateData !== undefined &&
+            updateData.information !== ""
+              ? "text-orange-600 font-bold "
+              : "")
+          }
+        >
+          전달사항
+        </div>
         <div className='w-full p-2 border-2'>
           {
             // 전달사항 출력처리
             // 아임웹 -> json처리 해야 함
             isIamweb === true && infoDataJson !== undefined ? (
               <>
-                {Object.keys(infoDataJson).map((d) => {
-                  const url = `http://101.33.73.252:9999/api/airport/view/${infoDataJson[d]}`;
-                  return (
-                    <div key={d} className='flex flex-row justify-between'>
-                      <div className='p-2 m-1 text-sm rounded-lg w-96 bg-slate-200'>
-                        {d === "비행편" ? (
-                          <a
-                            href={url}
-                            target='_blank'
-                            rel='noreferrer'
-                            className='text-red-600'
-                          >
-                            {d}
-                          </a>
-                        ) : (
-                          d
-                        )}
-                      </div>
-                      {
-                        // 배차처리 -> 출력만함
-                        uiType === UIType.DISPATCH ? (
-                          <div className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'>
-                            {infoDataJson[d]}
+                <div className='flex flex-row w-full'>
+                  <div className='w-full'>
+                    {Object.keys(infoDataJson).map((d) => {
+                      const url = `http://101.33.73.252:9999/api/airport/view/${infoDataJson[d]}`;
+                      return (
+                        <div
+                          key={d}
+                          className='flex flex-row justify-between w-full'
+                        >
+                          <div className='p-2 m-1 text-sm rounded-lg w-96 bg-slate-200'>
+                            {d === "비행편" ? (
+                              <a
+                                href={url}
+                                target='_blank'
+                                rel='noreferrer'
+                                className='text-red-600'
+                              >
+                                {d}
+                              </a>
+                            ) : (
+                              d
+                            )}
                           </div>
-                        ) : (
-                          <input
-                            id={d}
-                            defaultValue={infoDataJson[d]}
-                            className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'
-                            onChange={(e) => {
-                              const div = document.getElementById(d);
-                              div!.innerHTML = e.target.value;
-                              infoDataJson[d] = e.target.value;
-                              setInformation(JSON.stringify(infoDataJson));
-                            }}
-                          />
-                        )
-                      }
-                    </div>
-                  );
-                })}
-                {/* <div className='hidden'>
+                          {
+                            // 배차처리 -> 출력만함
+                            uiType === UIType.DISPATCH ? (
+                              <div className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'>
+                                {infoDataJson[d]}
+                              </div>
+                            ) : (
+                              <input
+                                id={d}
+                                defaultValue={infoDataJson[d]}
+                                className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'
+                                onChange={(e) => {
+                                  const div = document.getElementById(d);
+                                  div!.innerHTML = e.target.value;
+                                  infoDataJson[d] = e.target.value;
+                                  setInformation(JSON.stringify(infoDataJson));
+                                }}
+                              />
+                            )
+                          }
+                        </div>
+                      );
+                    })}
+                    {/* <div className='hidden'>
                   <TextField id='infomation' value={infoDataJson} />
                 </div> */}
+                  </div>
+                  {uiType === UIType.DISPATCH &&
+                  updateData !== undefined &&
+                  updateData.information !== "" ? (
+                    <>
+                      <div className='w-full'>
+                        {Object.keys(JSON.parse(updateData.information)).map(
+                          (d) => {
+                            return (
+                              <div
+                                key={d}
+                                className='flex flex-row justify-between'
+                              >
+                                {
+                                  // 배차처리 -> 출력만함
+                                  <div className='w-full p-2 m-1 text-sm bg-orange-100 border-2 rounded-lg'>
+                                    {JSON.parse(updateData.information)[d]}
+                                  </div>
+                                }
+                              </div>
+                            );
+                          }
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </>
             ) : // 업체에서 배차요청한 데이터일경우 배차처리시 화면에 출력만 함
             uiType === UIType.DISPATCH ? (
               <>
-                <div className='w-full h-full p-3 whitespace-pre rounded-lg'>
-                  {infoDataJson}
+                <div className='flex flex-row'>
+                  <div className='w-full h-full p-3 whitespace-pre rounded-lg bg-slate-300'>
+                    {infoDataJson}
+                  </div>
+
+                  {updateData !== undefined && updateData.information !== "" ? (
+                    <>
+                      <div className='w-full h-full p-3 ml-2 whitespace-pre bg-orange-100 rounded-lg'>
+                        updateData.information
+                      </div>
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </>
             ) : (
@@ -310,17 +384,10 @@ export function DispatchProcessInfo({
 export function DispatchProcessInfoPrice({
   title,
   value,
+  setValue,
   id,
-  total,
-  setTotal,
   isModify = true,
 }: any) {
-  const [val, setVal] = useState(0);
-
-  useEffect(() => {
-    setVal(value);
-  }, [value]);
-
   return (
     <div className='flex flex-row items-center w-56'>
       <div className='w-24'>{title}</div>
@@ -328,18 +395,16 @@ export function DispatchProcessInfoPrice({
         {isModify ? (
           <input
             id={id}
-            value={val}
+            value={value}
             className='w-full p-2 border-dashed rounded-lg '
             type='number'
             onChange={(e) => {
-              const v = +e.target.value;
-              setTotal(total + v - val);
-              setVal(+e.target.value);
+              setValue(e.target.value);
             }}
           />
         ) : (
           <div className='w-full p-2 border-2 border-dashed rounded-lg h-9'>
-            {val}
+            {value}
           </div>
         )}
       </div>
@@ -350,15 +415,9 @@ export function DispatchProcessInfoPrice({
 export function DispatchProcessInfoTotalPrice({
   title,
   value,
-  setValue,
   id,
   isModify = true,
 }: any) {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    setVal(value);
-  }, [value]);
-
   return (
     <div className='flex flex-row items-center w-56'>
       <div className='w-24'>{title}</div>
@@ -367,7 +426,7 @@ export function DispatchProcessInfoTotalPrice({
           <input
             disabled
             id={id}
-            value={val}
+            value={value}
             className='w-full p-2 border-dashed rounded-lg '
             type='number'
             // onChange={(e) => {
@@ -510,11 +569,25 @@ export function DispatchInfoInput({
 }: any) {
   const [totalPrice, setTotalPrice] = useState(0);
 
+  const [baseFare, setBaseFare] = useState(0);
+  const [addFare, setAddFare] = useState(0);
+  const [exceedFare, setExceedFare] = useState(0);
+
   useEffect(() => {
     if (dispatch !== undefined) {
-      setTotalPrice(dispatch.totalFare);
+      // setTotalPrice(dispatch.totalFare === undefined ? 0 : dispatch.totalFare);
+      setBaseFare(dispatch.baseFare === undefined ? 0 : dispatch.baseFare);
+      setAddFare(dispatch.addFare === undefined ? 0 : dispatch.addFare);
+      setExceedFare(
+        dispatch.exceedFare === undefined ? 0 : dispatch.exceedFare
+      );
+      setTotalPrice(+baseFare + +addFare + +exceedFare);
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    setTotalPrice(+baseFare + +addFare + +exceedFare);
+  }, [baseFare, addFare, exceedFare]);
 
   return (
     <>
@@ -591,18 +664,16 @@ export function DispatchInfoInput({
               <DispatchProcessInfoPrice
                 title='기본요금'
                 id='baseFare'
-                value={dispatch ? dispatch.baseFare : 0}
-                total={totalPrice}
-                setTotal={setTotalPrice}
+                value={baseFare}
+                setValue={setBaseFare}
                 isModify={isModify}
               />
               <GapWidthForDispatchInput />
               <DispatchProcessInfoPrice
                 title='추가요금'
                 id='addFare'
-                value={dispatch ? dispatch.addFare : 0}
-                total={totalPrice}
-                setTotal={setTotalPrice}
+                value={addFare}
+                setValue={setAddFare}
                 isModify={isModify}
               />
             </div>
@@ -610,9 +681,8 @@ export function DispatchInfoInput({
               <DispatchProcessInfoPrice
                 title='초과요금'
                 id='exceedFare'
-                value={dispatch ? dispatch.exceedFare : 0}
-                total={totalPrice}
-                setTotal={setTotalPrice}
+                value={exceedFare}
+                setValue={setExceedFare}
                 isModify={isModify}
               />
               <GapWidthForDispatchInput />
@@ -620,7 +690,6 @@ export function DispatchInfoInput({
                 title='요금총합'
                 id='totalFare'
                 value={totalPrice}
-                setValue={setTotalPrice}
                 isModify={isModify}
               />
             </div>
@@ -889,13 +958,29 @@ export function onSubmitDispatch({
 }
 
 // 배차처리에 출발지명, 출발지주소, 도착지, 도착지 주소 출력
-export function DispatchStartGoalLocationShowUI({ order }: any) {
+export function DispatchStartGoalLocationShowUI({ order, updateData }: any) {
   return (
     <>
-      <InfoBoxWithTitle title='출발지명' info={order?.startLocation} />
-      <InfoBoxWithTitle title='출발지주소' info={order?.startAddress} />
-      <InfoBoxWithTitle title='도착지' info={order?.goalLocation} />
-      <InfoBoxWithTitle title='도착지주소' info={order?.goalAddress} />
+      <InfoBoxWithTitle
+        title='출발지명'
+        info={order?.startLocation}
+        updateData={updateData?.startLocation}
+      />
+      <InfoBoxWithTitle
+        title='출발지주소'
+        info={order?.startAddress}
+        updateData={updateData?.startAddress}
+      />
+      <InfoBoxWithTitle
+        title='도착지'
+        info={order?.goalLocation}
+        updateData={updateData?.goalLocation}
+      />
+      <InfoBoxWithTitle
+        title='도착지주소'
+        info={order?.goalAddress}
+        updateData={updateData?.goalAddress}
+      />
     </>
   );
 }
@@ -939,6 +1024,7 @@ export function DispatchStartGoalLocationInputUI({
 // 시간대절 출발지 도착지 여행루트 시간대절정보 출력
 export function DispatchStartGoalRouteTimezonShowUI({
   iamwebTimeOrderInfo,
+  updateData,
 }: any) {
   return (
     <>
@@ -984,11 +1070,19 @@ export function DispatchStartGoalRouteTimezonInputUI({
 }
 
 // 탑승자명, 연락처 출력
-export function CustomNamePhoneShowUI({ order }: any) {
+export function CustomNamePhoneShowUI({ order, updateData }: any) {
   return (
     <>
-      <InfoBoxWithTitle title='탑승자이름' info={order?.customName} />
-      <InfoBoxWithTitle title='탑승자번호' info={order?.customPhone} />
+      <InfoBoxWithTitle
+        title='탑승자이름'
+        info={order?.customName}
+        updateData={updateData?.customName}
+      />
+      <InfoBoxWithTitle
+        title='탑승자번호'
+        info={order?.customPhone}
+        updateData={updateData?.customPhone}
+      />
     </>
   );
 }
@@ -1085,7 +1179,8 @@ export function HeaderUI({
             ) : // 배차요청 취소일 경우 취소한 시간을 보여줌
             order !== undefined ? (
               <>
-                {order.else02 === ""
+                {order.else02 === "" ||
+                JSON.parse(order.else02)["dispatch_cancel_time"] === undefined
                   ? ""
                   : `[배차요청취소시간: ${
                       JSON.parse(order.else02)["dispatch_cancel_time"]
@@ -1102,17 +1197,35 @@ export function HeaderUI({
 }
 
 // 상품구분
-export function OrderTypeUI({ uiType, order, setSelectType }: any) {
+export function OrderTypeUI({ uiType, order, setSelectType, updateData }: any) {
   return (
     <>
       {" "}
       <div className='flex flex-row items-center w-80'>
-        <div className='w-24 text-sm'>상품구분</div>
+        <div
+          className={
+            `w-24 text-sm ` +
+            (updateData !== undefined && updateData.orderTitle !== ""
+              ? "text-orange-600 font-bold "
+              : "")
+          }
+        >
+          상품구분
+        </div>
 
         {/* 배차입력, 아임웹일 경우는 타이틀만 보여준다. */}
         {uiType === UIType.DISPATCH || order?.isIamweb ? (
           <div className='flex items-center justify-center w-full h-full m-2 rounded-lg bg-slate-300'>
-            <div className='px-2 text-xs'>{order!.orderTitle}</div>
+            <div
+              className='px-2 text-xs'
+              dangerouslySetInnerHTML={{
+                __html:
+                  `${order!.orderTitle}` +
+                  (updateData !== undefined && updateData.orderTitle !== ""
+                    ? ` [<b>${updateData.orderTitle}</b>] `
+                    : ""),
+              }}
+            ></div>
           </div>
         ) : (
           <select
@@ -1153,6 +1266,7 @@ export function DispatchOrderUI({
   setIsStartAddressSearchShow,
   goalAddress,
   setIsGoalAddressSearchShow,
+  updateData,
 }: any) {
   return (
     <>
@@ -1162,6 +1276,7 @@ export function DispatchOrderUI({
           <InfoBoxWithTitle
             title='탑승일시'
             info={DateUtils.iso8601DateToString(order!.boardingDate)}
+            updateData={updateData?.boardingDate}
           />
         ) : (
           <BoardingDateComponent
@@ -1175,7 +1290,10 @@ export function DispatchOrderUI({
             {/* 배차정보 - 출발지명 도착지명 */}
             {uiType === UIType.DISPATCH ? (
               <>
-                <DispatchStartGoalLocationShowUI order={order} />
+                <DispatchStartGoalLocationShowUI
+                  order={order}
+                  updateData={updateData}
+                />
               </>
             ) : (
               <>
@@ -1198,6 +1316,7 @@ export function DispatchOrderUI({
           <>
             <DispatchStartGoalRouteTimezonShowUI
               iamwebTimeOrderInfo={iamwebTimeOrderInfo}
+              updateData={updateData}
             />
           </>
         ) : (
@@ -1216,7 +1335,7 @@ export function DispatchOrderUI({
           <>
             {uiType === UIType.DISPATCH ? (
               <>
-                <CustomNamePhoneShowUI order={order} />
+                <CustomNamePhoneShowUI order={order} updateData={updateData} />
               </>
             ) : (
               <>

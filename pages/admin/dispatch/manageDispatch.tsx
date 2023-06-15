@@ -73,6 +73,8 @@ export default function ManageDispatchModal({
   const [startAddress, setStartAddress] = useState("");
   const [goalAddress, setGoalAddress] = useState("");
 
+  const [updateData, setUpdateData] = useState(undefined);
+
   useEffect(() => {
     if (!loading && !isFirst) {
       if (data?.ok === false) {
@@ -126,6 +128,22 @@ export default function ManageDispatchModal({
     // 주문 정보 수정모드
     if (uiType === UIType.MODIFY) {
       getOrderUserInfo();
+    }
+
+    // 업데이트된 데이터 세팅
+    if (order?.else02 !== undefined && order?.else02 !== "") {
+      const else02Json = JSON.parse(order.else02);
+      const else02Keys = Object.keys(else02Json);
+      let isUpdate = false;
+      for (let index = 0; index < else02Keys.length; index++) {
+        const key = else02Keys[index];
+        if (key === "update") isUpdate = true;
+      }
+
+      if (isUpdate) {
+        const updateJson = JSON.parse(else02Json["update"]);
+        setUpdateData(updateJson);
+      }
     }
 
     // 배차관련 정보
@@ -319,10 +337,13 @@ export default function ManageDispatchModal({
                             uiType={uiType}
                             order={order}
                             setSelectType={setSelectType}
+                            updateData={updateData}
                           />
 
                           <UserInfomation me={me} />
                         </div>
+
+                        {/* 배차 주문 정보  */}
                         <DispatchOrderUI
                           uiType={uiType}
                           order={order}
@@ -338,6 +359,7 @@ export default function ManageDispatchModal({
                           setIsGoalAddressSearchShow={
                             setIsGoalAddressSearchShow
                           }
+                          updateData={updateData}
                         />
                       </div>
 
@@ -347,6 +369,7 @@ export default function ManageDispatchModal({
                         information={informationForOrder}
                         isIamweb={order?.isIamweb}
                         setInformation={setInformationForOrder}
+                        updateData={updateData}
                       />
 
                       {/* 문자전송 버튼 */}
