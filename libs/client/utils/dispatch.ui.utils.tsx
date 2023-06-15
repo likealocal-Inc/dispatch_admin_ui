@@ -65,7 +65,7 @@ export function InfoBoxWithTitle({ title, info, updateData = "" }: any) {
   );
 }
 
-export const orderTypeList = ["공항픽업", "공항샌딩", "시간대절"];
+export const orderTypeList = ["공항픽업", "공항샌딩", "시간대절", "편도예약"];
 
 // 사용자 정보 출력 컴포넌트
 export function UserInfomation({ me }: any) {
@@ -81,22 +81,53 @@ export function UserInfomation({ me }: any) {
 }
 
 // 다음 주소
-export function MyDaumPostcode({ isDisplay, onComplete }: any) {
+export function MyDaumPostcode({ isDisplay, onComplete, onClose }: any) {
+  const [ttt, setTTT] = useState("no");
+  useEffect(() => {
+    setTimeout(() => {
+      setTTT(isDisplay ? "ok" : "no");
+    }, 100);
+  }, [isDisplay]);
+
   return (
-    <DaumPostcode
-      style={{
-        position: "absolute",
-        top: "48%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "650px",
-        height: "500px",
-        border: "2px solid #000",
-        boxShadow: "24",
-        display: isDisplay ? "block" : "none",
-      }}
-      onComplete={onComplete}
-    />
+    <>
+      {ttt === "ok" ? (
+        <div
+          className={
+            isDisplay
+              ? `fixed inset-0 items-center justify-center bg-slate-700 bg-opacity-60`
+              : "hidden"
+          }
+        >
+          <div className='flex flex-col items-center justify-center w-full h-full'>
+            <div className=''>
+              <div className='flex justify-end'>
+                <button
+                  className='w-10 p-2 mr-2 text-center text-red-600 bg-green-500 rounded-lg'
+                  onClick={() => onClose()}
+                >
+                  X
+                </button>
+              </div>
+              <DaumPostcode
+                style={{
+                  width: "800px",
+                  height: "600px",
+                  border: "2px solid #000",
+                  boxShadow: "24",
+                }}
+                onComplete={onComplete}
+                onClose={() => {
+                  onClose();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
+    </>
   );
 }
 
@@ -142,13 +173,15 @@ export function LocationAndAddress({
               />
             </>
           ) : (
-            <TextField
-              value={address}
-              className='w-full text-sm'
-              onClick={() => {
-                setIsAddressSearchShow(true);
-              }}
-            />
+            <div className='flex flex-row'>
+              <TextField value={address} className='w-full text-sm' />
+              <button
+                className='w-20 ml-2 rounded-lg bg-slate-400'
+                onClick={() => setIsAddressSearchShow(true)}
+              >
+                조회
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -1184,7 +1217,7 @@ export function HeaderUI({
                   ? ""
                   : `[배차요청취소시간: ${
                       JSON.parse(order.else02)["dispatch_cancel_time"]
-                    })`}
+                    }]`}
               </>
             ) : (
               ""
@@ -1276,7 +1309,11 @@ export function DispatchOrderUI({
           <InfoBoxWithTitle
             title='탑승일시'
             info={DateUtils.iso8601DateToString(order!.boardingDate)}
-            updateData={updateData?.boardingDate}
+            updateData={
+              updateData !== undefined && updateData.boardingDate !== ""
+                ? DateUtils.iso8601DateToString(updateData?.boardingDate)
+                : ""
+            }
           />
         ) : (
           <BoardingDateComponent

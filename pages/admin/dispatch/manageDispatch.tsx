@@ -291,12 +291,12 @@ export default function ManageDispatchModal({
   };
 
   const onStartAddress = (data: any) => {
-    closeAddressModal();
+    // closeAddressModal();
     setStartAddress(data.address);
   };
 
   const onGoalAddress = (data: any) => {
-    closeAddressModal();
+    // closeAddressModal();
     setGoalAddress(data.address);
   };
 
@@ -317,7 +317,7 @@ export default function ManageDispatchModal({
           }}
         >
           <Fade in={open}>
-            <div className=''>
+            <div className='z-0'>
               <Box sx={style} className='bg-slate-100'>
                 <HeaderUI
                   uiType={uiType}
@@ -447,10 +447,12 @@ export default function ManageDispatchModal({
                   <MyDaumPostcode
                     isDisplay={isStartAddressSearchShow}
                     onComplete={onStartAddress}
+                    onClose={closeAddressModal}
                   />
                   <MyDaumPostcode
                     isDisplay={isGoalAddressSearchShow}
                     onComplete={onGoalAddress}
+                    onClose={closeAddressModal}
                   />
                 </div>
               </Box>
