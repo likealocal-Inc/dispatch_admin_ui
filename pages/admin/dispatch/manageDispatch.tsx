@@ -45,6 +45,10 @@ export default function ManageDispatchModal({
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectType, setSelectType] = useState(orderTypeList[0]);
   const [me, setMe] = useState<UserModel>();
+
+  // 배차 요청자
+  const [writer, setWriter] = useState<UserModel>();
+
   const [isModify, setIsModify] = useState(true);
   // 배차정보 모델
   const [dispatch, setDispatch] = useState<DispatchModel>();
@@ -96,6 +100,7 @@ export default function ManageDispatchModal({
       addUrlParams: `/${order?.userId}`,
     }).then((d) => d.json());
     user.then((d) => {
+      setWriter(d.data);
       setStartDate(new Date(order!.boardingDate));
       setSelectType(order!.orderTitle);
       setStartAddress(order!.startAddress);
@@ -340,7 +345,7 @@ export default function ManageDispatchModal({
                             updateData={updateData}
                           />
 
-                          <UserInfomation me={me} />
+                          <UserInfomation me={writer} />
                         </div>
 
                         {/* 배차 주문 정보  */}
@@ -352,6 +357,8 @@ export default function ManageDispatchModal({
                           iamwebTimeOrderInfo={iamwebTimeOrderInfo}
                           selectType={selectType}
                           startAddress={startAddress}
+                          setStartAddress={setStartAddress}
+                          setGoalAddress={setGoalAddress}
                           setIsStartAddressSearchShow={
                             setIsStartAddressSearchShow
                           }

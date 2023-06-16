@@ -33,7 +33,7 @@ const ProfileEdit = () => {
         setTimeout(() => {
           setMessage("");
           setShowLoading(false);
-        }, 200);
+        }, 100);
       } else {
         setShowLoading(false);
       }

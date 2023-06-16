@@ -137,6 +137,7 @@ export function LocationAndAddress({
   orderType,
   uiType,
   address,
+  setAddress,
   setIsAddressSearchShow,
   locationStr,
   locationObj,
@@ -174,7 +175,12 @@ export function LocationAndAddress({
             </>
           ) : (
             <div className='flex flex-row'>
-              <TextField value={address} className='w-full text-sm' />
+              <TextField
+                value={address}
+                defaultValue={address}
+                className='w-full text-sm'
+                onChange={(e) => setAddress(e.target.value)}
+              />
               <button
                 className='w-20 ml-2 rounded-lg bg-slate-400'
                 onClick={() => setIsAddressSearchShow(true)}
@@ -1027,6 +1033,8 @@ export function DispatchStartGoalLocationInputUI({
   setIsStartAddressSearchShow,
   goalAddress,
   setIsGoalAddressSearchShow,
+  setStartAddress,
+  setGoalAddress,
 }: any) {
   return (
     <>
@@ -1036,6 +1044,7 @@ export function DispatchStartGoalLocationInputUI({
         orderType={orderTypeList[0]}
         uiType={uiType}
         address={startAddress}
+        setAddress={setStartAddress}
         setIsAddressSearchShow={setIsStartAddressSearchShow}
         locationStr={"startLocation"}
         locationObj={order?.startLocation}
@@ -1046,6 +1055,7 @@ export function DispatchStartGoalLocationInputUI({
         orderType={orderTypeList[1]}
         uiType={uiType}
         address={goalAddress}
+        setAddress={setGoalAddress}
         setIsAddressSearchShow={setIsGoalAddressSearchShow}
         locationStr={"goalLocation"}
         locationObj={order?.goalLocation}
@@ -1300,6 +1310,8 @@ export function DispatchOrderUI({
   goalAddress,
   setIsGoalAddressSearchShow,
   updateData,
+  setStartAddress,
+  setGoalAddress,
 }: any) {
   return (
     <>
@@ -1344,6 +1356,8 @@ export function DispatchOrderUI({
                   setIsStartAddressSearchShow={setIsStartAddressSearchShow}
                   goalAddress={goalAddress}
                   setIsGoalAddressSearchShow={setIsGoalAddressSearchShow}
+                  setStartAddress={setStartAddress}
+                  setGoalAddress={setGoalAddress}
                 />
               </>
             )}
