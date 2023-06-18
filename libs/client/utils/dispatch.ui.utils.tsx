@@ -1200,39 +1200,42 @@ export function HeaderUI({
               >
                 배차요청
               </Button>
-            ) : // 수정모드 - 완료, 배차취소가 아닌것은 배차요청취소
-            uiType === UIType.MODIFY &&
-              order.status !== EnumDispatchStatus.DONE &&
-              order.status !== EnumDispatchStatus.DISPATCH_REQUEST_CANCEL &&
-              order.status !== EnumDispatchStatus.DISPATCH_CANCEL ? (
-              <Button
-                variant='contained'
-                className='mr-2 font-bold text-black bg-green-500 w-44'
-                onClick={() =>
-                  onStatusUpdate({
-                    order,
-                    status: EnumDispatchStatus.DISPATCH_REQUEST_CANCEL, // 배차요쳥 취소
-                    handleModalClose,
-                    setReloadList,
-                  })
-                }
-              >
-                배차요청 취소
-              </Button>
-            ) : // 배차요청 취소일 경우 취소한 시간을 보여줌
-            order !== undefined ? (
-              <>
-                {order.else02 === "" ||
-                JSON.parse(order.else02)["dispatch_cancel_time"] === undefined
-                  ? ""
-                  : `[배차요청취소시간: ${
-                      JSON.parse(order.else02)["dispatch_cancel_time"]
-                    }]`}
-              </>
             ) : (
+              // 수정모드 - 완료, 배차취소가 아닌것은 배차요청취소
               ""
             )
           }
+          {uiType === UIType.MODIFY &&
+          order.status !== EnumDispatchStatus.DONE &&
+          order.status !== EnumDispatchStatus.DISPATCH_REQUEST_CANCEL &&
+          order.status !== EnumDispatchStatus.DISPATCH_CANCEL ? (
+            <Button
+              variant='contained'
+              className='mr-2 font-bold text-black bg-green-500 w-44'
+              onClick={() =>
+                onStatusUpdate({
+                  order,
+                  status: EnumDispatchStatus.DISPATCH_REQUEST_CANCEL, // 배차요쳥 취소
+                  handleModalClose,
+                  setReloadList,
+                })
+              }
+            >
+              배차요청 취소
+            </Button>
+          ) : // 배차요청 취소일 경우 취소한 시간을 보여줌
+          order !== undefined ? (
+            <>
+              {order.else02 === "" ||
+              JSON.parse(order.else02)["dispatch_cancel_time"] === undefined
+                ? ""
+                : `[배차요청취소시간: ${
+                    JSON.parse(order.else02)["dispatch_cancel_time"]
+                  }]`}
+            </>
+          ) : (
+            ""
+          )}
         </div>
       </Typography>
     </>
