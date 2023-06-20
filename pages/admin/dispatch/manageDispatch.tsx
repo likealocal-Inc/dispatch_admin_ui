@@ -344,8 +344,13 @@ export default function ManageDispatchModal({
                             setSelectType={setSelectType}
                             updateData={updateData}
                           />
-
-                          <UserInfomation me={writer} />
+                          {uiType === UIType.DISPATCH ? (
+                            <UserInfomation me={writer} />
+                          ) : uiType === UIType.MODIFY ? (
+                            <UserInfomation me={writer} />
+                          ) : (
+                            <UserInfomation me={me} />
+                          )}
                         </div>
 
                         {/* 배차 주문 정보  */}
