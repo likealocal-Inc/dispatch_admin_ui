@@ -235,7 +235,7 @@ export function InfomationComponent({
         >
           전달사항
         </div>
-        <div className='w-full p-2 border-2'>
+        <div className='w-full p-2 '>
           {
             // 전달사항 출력처리
             // 아임웹 -> json처리 해야 함
@@ -324,13 +324,13 @@ export function InfomationComponent({
             uiType === UIType.DISPATCH ? (
               <>
                 <div className='flex flex-row'>
-                  <div className='w-full h-full p-3 whitespace-pre rounded-lg bg-slate-300'>
+                  <div className='w-full h-48 p-3 overflow-y-auto whitespace-pre rounded-lg bg-slate-300 scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                     {infoDataJson}
                   </div>
 
                   {updateData !== undefined && updateData.information !== "" ? (
                     <>
-                      <div className='w-full h-full p-3 ml-2 whitespace-pre bg-orange-100 rounded-lg'>
+                      <div className='w-full h-48 p-3 ml-2 overflow-y-auto whitespace-pre bg-orange-100 rounded-lg scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                         {updateData.information}
                       </div>
                     </>
@@ -345,11 +345,10 @@ export function InfomationComponent({
                 defaultValue={
                   uiType === UIType.MODIFY
                     ? infoDataJson
-                    : "탑승자수:\n수화물수:\n경유지:\n경유지주소:\n국적:\n기타:\n"
+                    : "■ 탑승자수:\n■ 차량 유형(화이트/블랙):\n■ 정산방식(후불정산/현장결제(카드)/문자결제):\n■ 수화물수:\n■ 경유지:\n■ 경유지주소:\n■ 수화물수:\n■ 국적:\n■ 기타:"
                 }
-                className='w-full text-sm'
+                className='w-full text-sm overflow-y-scroll scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'
                 multiline
-                placeholder='탑승자수, 수화물수, 경유지, 경유지주소, 국적 정보를 넣어 주세요'
                 rows={6}
                 onChange={(d) => {
                   setInformation(d.target.value);
