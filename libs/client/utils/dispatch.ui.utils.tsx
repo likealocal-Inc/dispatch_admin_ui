@@ -250,7 +250,7 @@ export function InfomationComponent({
                           key={d}
                           className='flex flex-row justify-between w-96'
                         >
-                          <div className='w-3/6 p-2 m-1 text-sm rounded-lg bg-slate-200'>
+                          <div className='w-40 p-2 m-1 text-sm rounded-lg bg-slate-200 overflow-y-auto whitespace-pre scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                             {d === "비행편" ? (
                               <a
                                 href={url}
@@ -267,14 +267,33 @@ export function InfomationComponent({
                           {
                             // 배차처리 -> 출력만함
                             uiType === UIType.DISPATCH ? (
-                              <div className='w-3/5 p-2 m-1 text-sm bg-white border-2 rounded-lg'>
-                                {infoDataJson[d]}
-                              </div>
+                              d === "기타" ? (
+                                <div className='w-72 h-48 p-2 m-1 text-sm bg-white word-break:break-all border-2 rounded-lg overflow-y-auto  scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                                  {infoDataJson[d]}
+                                </div>
+                              ) : (
+                                <div className='w-72 p-2 m-1 text-sm bg-white border-2 rounded-lg overflow-y-auto whitespace-pre scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                                  {infoDataJson[d]}
+                                </div>
+                              )
+                            ) : d === "기타" ? (
+                              <textarea
+                                id={d}
+                                defaultValue={infoDataJson[d]}
+                                className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'
+                                onChange={(e) => {
+                                  const div = document.getElementById(d);
+                                  div!.innerHTML = e.target.value;
+                                  infoDataJson[d] = e.target.value;
+                                  setInformation(JSON.stringify(infoDataJson));
+                                }}
+                                rows={4}
+                              />
                             ) : (
                               <input
                                 id={d}
                                 defaultValue={infoDataJson[d]}
-                                className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'
+                                className='p-2 m-1 text-sm bg-white border-2 rounded-lg w-52'
                                 onChange={(e) => {
                                   const div = document.getElementById(d);
                                   div!.innerHTML = e.target.value;
@@ -303,12 +322,16 @@ export function InfomationComponent({
                                 key={d}
                                 className='flex flex-row justify-between'
                               >
-                                {
-                                  // 배차처리 -> 출력만함
-                                  <div className='w-full p-2 m-1 text-sm bg-orange-100 border-2 rounded-lg'>
+                                {d === "기타" ? (
+                                  <div className='p-2 m-1 text-sm bg-orange-100 border-2 rounded-lg w-64 h-48 overflow-y-auto whitespace-pre  scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                                     {JSON.parse(updateData.information)[d]}
                                   </div>
-                                }
+                                ) : (
+                                  // 배차처리 -> 출력만함
+                                  <div className='p-2 m-1 text-sm bg-orange-100 border-2 rounded-lg w-64 h-10 overflow-y-auto whitespace-pre  scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                                    {JSON.parse(updateData.information)[d]}
+                                  </div>
+                                )}
                               </div>
                             );
                           }
@@ -324,13 +347,13 @@ export function InfomationComponent({
             uiType === UIType.DISPATCH ? (
               <>
                 <div className='flex flex-row'>
-                  <div className='w-full h-48 p-3 overflow-y-auto whitespace-pre rounded-lg bg-slate-300 scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                  <div className='w-72 h-48 p-3 overflow-y-auto whitespace-pre rounded-lg bg-slate-300 scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                     {infoDataJson}
                   </div>
 
                   {updateData !== undefined && updateData.information !== "" ? (
                     <>
-                      <div className='w-full h-48 p-3 ml-2 overflow-y-auto whitespace-pre bg-orange-100 rounded-lg scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                      <div className='w-72 h-48 p-3 ml-2 overflow-y-auto whitespace-pre bg-orange-100 rounded-lg scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                         {updateData.information}
                       </div>
                     </>
@@ -345,7 +368,7 @@ export function InfomationComponent({
                 defaultValue={
                   uiType === UIType.MODIFY
                     ? infoDataJson
-                    : "■ 탑승자수:\n■ 차량 유형(화이트/블랙):\n■ 정산방식(후불정산/현장결제(카드)/문자결제):\n■ 수화물수:\n■ 경유지:\n■ 경유지주소:\n■ 수화물수:\n■ 국적:\n■ 기타:"
+                    : "■ 탑승자수:\n■ 차량 유형(화이트/블랙):\n■ 정산방식(후불정산/현장결제(카드)/문자결제):\n■ 수화물수:\n■ 경유지:\n■ 경유지주소:\n■ 국적:\n■ 기타:"
                 }
                 className='w-full text-sm overflow-y-scroll scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'
                 multiline
