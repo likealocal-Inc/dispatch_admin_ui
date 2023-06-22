@@ -248,9 +248,9 @@ export function InfomationComponent({
                       return (
                         <div
                           key={d}
-                          className='flex flex-row justify-between w-96'
+                          className='flex flex-row justify-between w-full'
                         >
-                          <div className='w-40 p-2 m-1 text-sm rounded-lg bg-slate-200 overflow-y-auto whitespace-pre scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                          <div className='w-44 p-2 m-1 text-sm rounded-lg bg-slate-200 overflow-y-auto whitespace-pre scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                             {d === "비행편" ? (
                               <a
                                 href={url}
@@ -280,7 +280,7 @@ export function InfomationComponent({
                               <textarea
                                 id={d}
                                 defaultValue={infoDataJson[d]}
-                                className='w-full p-2 m-1 text-sm bg-white border-2 rounded-lg'
+                                className='p-2 m-1 text-sm bg-white border-2 rounded-lg w-[450px]'
                                 onChange={(e) => {
                                   const div = document.getElementById(d);
                                   div!.innerHTML = e.target.value;
@@ -293,7 +293,7 @@ export function InfomationComponent({
                               <input
                                 id={d}
                                 defaultValue={infoDataJson[d]}
-                                className='p-2 m-1 text-sm bg-white border-2 rounded-lg w-52'
+                                className='p-2 m-1 text-sm bg-white border-2 rounded-lg w-[450px]'
                                 onChange={(e) => {
                                   const div = document.getElementById(d);
                                   div!.innerHTML = e.target.value;
@@ -347,18 +347,19 @@ export function InfomationComponent({
             uiType === UIType.DISPATCH ? (
               <>
                 <div className='flex flex-row'>
-                  <div className='w-72 h-48 p-3 overflow-y-auto whitespace-pre rounded-lg bg-slate-300 scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
-                    {infoDataJson}
-                  </div>
-
                   {updateData !== undefined && updateData.information !== "" ? (
                     <>
+                      <div className='w-72 h-48 p-3 overflow-y-auto whitespace-pre rounded-lg bg-slate-300 scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                        {infoDataJson}
+                      </div>
                       <div className='w-72 h-48 p-3 ml-2 overflow-y-auto whitespace-pre bg-orange-100 rounded-lg scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
                         {updateData.information}
                       </div>
                     </>
                   ) : (
-                    ""
+                    <div className='w-[580px] h-48 p-3 overflow-y-auto whitespace-pre rounded-lg bg-slate-300 scrollbar-w-[2px] scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+                      {infoDataJson}
+                    </div>
                   )}
                 </div>
               </>
@@ -1691,7 +1692,7 @@ export function SendTxtMessage({ uiType, order, dispatch }: any) {
   return (
     <>
       {uiType === UIType.DISPATCH ? (
-        <div className='mt-14'>
+        <div className='mt-2'>
           <div className='mt-2 bg-slate-200'>
             <div className='pt-2 text-lg font-bold text-center'>문자전송</div>
             <div className='flex flex-row'>
