@@ -113,7 +113,14 @@ export default function Orders() {
                         : " bg-gray-600 hover:bg-gray-700 hover:shadow-lg focus:bg-gray-700 active:bg-gray-800")
                     }
                   >
-                    {DispatchUtils.getStatusString(d.status)}
+                    {/* 아임웹 -> 외부입력 확인 */}
+                    {d.status == EnumDispatchStatus.IAMWEB_ORDER
+                      ? d.orderTitle.includes("[moneybox]")
+                        ? // 머니박스일 경우
+                          "MONEY BOX"
+                        : // 그냥 아임웹 주문
+                          DispatchUtils.getStatusString(d.status)
+                      : DispatchUtils.getStatusString(d.status)}
                   </button>
                   {/* )} */}
                 </div>
@@ -168,7 +175,7 @@ export default function Orders() {
               scope='row'
               className=''
               dangerouslySetInnerHTML={{
-                __html: `${d.isIamweb ? "-" : ""}${d.customName}</br>${
+                __html: `${d.isIamweb ? "" : ""}${d.customName}</br>${
                   d.customPhone
                 }`,
               }}
