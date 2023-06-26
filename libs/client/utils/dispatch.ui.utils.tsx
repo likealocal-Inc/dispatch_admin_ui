@@ -1,6 +1,7 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
 import DaumPostcode from "react-daum-postcode";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useEffect, useState } from "react";
 import { DispatchUtils, EnumDispatchStatus } from "./dispatch.utils";
 import { callAPI } from "../call/call";
@@ -8,7 +9,6 @@ import { APIURLs } from "../constants";
 import { CompanyModel } from "../models/company.model";
 import { getHTMLElementByID, getSelctOptionValue } from "./html.utils";
 import { DateUtils } from "@libs/date.utils";
-import "react-datepicker/dist/react-datepicker.css";
 import { DispatchModel } from "../models/dispatch.model";
 import { OrderModel } from "../models/order.model";
 
