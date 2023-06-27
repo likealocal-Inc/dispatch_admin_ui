@@ -147,7 +147,7 @@ export default function ManageUserModal({
                       </div>
                       <div className='flex flex-row items-center w-72'>
                         <div className='w-24'>회사명</div>
-                        {isModify ? (
+                        {false ? (
                           <div className='w-full p-2 border-2 rounded-lg bg-slate-200'>
                             {user?.company}
                           </div>
