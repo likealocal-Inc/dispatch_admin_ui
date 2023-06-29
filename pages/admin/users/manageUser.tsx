@@ -72,12 +72,12 @@ export default function ManageUserModal({
     const email = getHTMLElementByID<HTMLInputElement>("m-email").value;
     const position = getHTMLElementByID<HTMLInputElement>("m-position").value;
     const name = getHTMLElementByID<HTMLInputElement>("m-name").value;
+    const companyObj = getHTMLElementByID<HTMLSelectElement>("m-company");
+    const company = companyObj.options[companyObj.selectedIndex].value;
     if (isModify === false) {
-      const companyObj = getHTMLElementByID<HTMLSelectElement>("m-company");
-      const company = companyObj.options[companyObj.selectedIndex].value;
       call({ phone, company, password, email, position, name });
     } else {
-      call({ phone, password, email, position, name });
+      call({ phone, company, password, email, position, name });
     }
   };
 
