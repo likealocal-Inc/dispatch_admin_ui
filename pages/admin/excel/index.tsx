@@ -18,6 +18,8 @@ export default function Excel() {
   const [condition, setCondition] = useState("1");
   const [period, setPeriod] = useState({ start: "", end: "" });
   const handleValueChange = (newValue: any) => {
+    console.log(newValue);
+    setValue(newValue);
     setPeriod({ start: newValue.startDate, end: newValue.endDate });
   };
 
@@ -25,7 +27,7 @@ export default function Excel() {
 
   useEffect(() => {
     setUser(ElseUtils.getUserFromLocalStorage());
-    setValue({ startDate: "", endDate: "" });
+    setValue({ start: "", end: "" });
   }, []);
 
   const downloadExcel = async () => {
