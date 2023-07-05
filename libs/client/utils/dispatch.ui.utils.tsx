@@ -396,7 +396,7 @@ export function BoardingDateComponent({ startDate, setStartDate }: any) {
           <DatePicker
             className='rounded-lg'
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            onChange={(date: any) => setStartDate(date)}
             showTimeSelect
             timeFormat='HH:mm'
             timeIntervals={5}
