@@ -71,6 +71,9 @@ export default function Excel() {
     setIsLaoding(false);
   };
 
+  if (user === undefined || user.role === "USER") {
+    return <></>;
+  }
   return (
     <>
       {isLaoding ? (
