@@ -70,6 +70,13 @@ export default function Sidebar() {
             <ul className='flex flex-col min-w-full list-none'>
               {/* {menuLi({ label: "대쉬보드", url: "/admin/dashboard" })} */}
               {menuLi({ label: "배차리스트", url: "/admin/dispatch" })}
+
+              {user
+                ? ["ADMIN", "SUPER"].includes(user?.role)
+                  ? menuLi({ label: "배차엑셀다운", url: "/admin/excel" })
+                  : ""
+                : ""}
+
               {user?.role !== "USER" ? (
                 <>
                   {menuLi({ label: "사용자리스트", url: "/admin/users" })}

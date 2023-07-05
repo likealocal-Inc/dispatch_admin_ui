@@ -8,6 +8,8 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}",
     "./libs/**/*.{js,jsx,ts,tsx}",
     "./public/**/*.{html,ico,svg}",
+    "./node_modules/flowbite/**/*.js",
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
   corePlugins: {
     preflight: false,
@@ -19,5 +21,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require("flowbite/plugin")],
 };

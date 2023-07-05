@@ -159,6 +159,11 @@ export const APIURLs = {
     method: METHOD.POST,
     desc: "문자전송",
   },
+  SEARCH_FOR_EXCEL: <APIURLType>{
+    url: makeAPIURL("order/search"),
+    method: METHOD.POST,
+    desc: "엑셀다운을 위한 데이터 조회",
+  },
 };
 
 /**
