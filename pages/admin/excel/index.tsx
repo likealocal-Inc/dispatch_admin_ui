@@ -50,7 +50,8 @@ export default function Excel() {
 
     await sleep(500);
 
-    if (data["jin"].length === 0 && data["iw"].length === 0) {
+    console.log(data);
+    if (data.length === 0) {
       alert("데이터가 없습니다.");
       setIsLaoding(false);
       return;
@@ -58,17 +59,17 @@ export default function Excel() {
 
     const fileName = `[${user?.email}]_${Date.now()}`;
 
-    const worksheet = XLSX.utils.json_to_sheet(data["jin"]);
+    const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, `jin-${fileName}.xlsx`);
+    XLSX.writeFile(workbook, `${fileName}.xlsx`);
 
-    await sleep(1000);
+    // await sleep(1000);
 
-    const worksheet2 = XLSX.utils.json_to_sheet(data["iw"]);
-    const workbook2 = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook2, worksheet2, "Sheet1");
-    XLSX.writeFile(workbook2, `iam-${fileName}.xlsx`);
+    // const worksheet2 = XLSX.utils.json_to_sheet(data["iw"]);
+    // const workbook2 = XLSX.utils.book_new();
+    // XLSX.utils.book_append_sheet(workbook2, worksheet2, "Sheet1");
+    // XLSX.writeFile(workbook2, `iam-${fileName}.xlsx`);
 
     setIsLaoding(false);
   };

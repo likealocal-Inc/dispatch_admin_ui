@@ -136,7 +136,6 @@ export default function Orders() {
                 }
               >
                 {d.company}-{d.key}
-                {d.boardingDate}
               </div>
             </StyledTableCell>
             <StyledTableCell
@@ -163,14 +162,17 @@ export default function Orders() {
             <StyledTableCell component='th' scope='row'>
               <div className='flex justify-center'>{d.user.email}</div>
             </StyledTableCell>
-            <StyledTableCell
+            {/* <StyledTableCell
               component='th'
               scope='row'
               className=''
               dangerouslySetInnerHTML={{
                 __html: `${DateUtils.iso8601DateToString(d.boardingDate)}`,
               }}
-            ></StyledTableCell>
+            ></StyledTableCell> */}
+            <StyledTableCell component='th' scope='row' className=''>
+              {d.boardingDate}
+            </StyledTableCell>
             <StyledTableCell
               component='th'
               scope='row'
