@@ -282,9 +282,20 @@ export default function ManageDispatchModal({
     }
     // 시간대절 상품일경우
     else {
-      if (orderTitle === "" || boardingDate === null || information === "") {
+      if (orderTitle === "" || boardingDate2 === null || information === "") {
         setMessage("모든 데이터를 입력해주세요");
       } else {
+        let date = new Date(boardingDate2);
+        let formattedDate = date.toISOString().split("T")[0];
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let formattedTime =
+          (hours < 10 ? "0" : "") +
+          hours +
+          ":" +
+          (minutes < 10 ? "0" : "") +
+          minutes;
+        const boardingDate = `${formattedDate} ${formattedTime}`;
         call({
           orderTitle,
           boardingDate,
