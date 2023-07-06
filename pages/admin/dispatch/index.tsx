@@ -136,6 +136,7 @@ export default function Orders() {
                 }
               >
                 {d.company}-{d.key}
+                {d.boardingDate}
               </div>
             </StyledTableCell>
             <StyledTableCell

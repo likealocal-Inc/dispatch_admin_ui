@@ -221,7 +221,7 @@ export default function ManageDispatchModal({
       customPhone = getHTMLElementByID<HTMLInputElement>("customPhone").value;
     }
 
-    const boardingDate = startDate;
+    let boardingDate2 = startDate;
     let information = informationForOrder; // getHTMLElementByID<HTMLInputElement>("infomation").value;
 
     let startInfo;
@@ -244,7 +244,7 @@ export default function ManageDispatchModal({
 
       if (
         orderTitle === "" ||
-        boardingDate === null ||
+        boardingDate2 === null ||
         startInfo.location === "" ||
         goalInfo.location === "" ||
         startInfo.address === "" ||
@@ -253,6 +253,17 @@ export default function ManageDispatchModal({
       ) {
         setMessage("모든 데이터를 입력해주세요");
       } else {
+        let date = new Date(boardingDate2);
+        let formattedDate = date.toISOString().split("T")[0];
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let formattedTime =
+          (hours < 10 ? "0" : "") +
+          hours +
+          ":" +
+          (minutes < 10 ? "0" : "") +
+          minutes;
+        const boardingDate = `${formattedDate} ${formattedTime}`;
         call({
           orderTitle,
           boardingDate,
@@ -263,7 +274,6 @@ export default function ManageDispatchModal({
           information,
           else01: "",
           else02: "",
-
           // 2023.06.09 추가
           customName,
           customPhone,
