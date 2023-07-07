@@ -254,16 +254,24 @@ export default function ManageDispatchModal({
         setMessage("모든 데이터를 입력해주세요");
       } else {
         let date = new Date(boardingDate2);
-        let formattedDate = date.toISOString().split("T")[0];
+        const newData = date.toLocaleDateString().split("/");
         let hours = date.getHours();
         let minutes = date.getMinutes();
+
+        let month = +newData[0];
+        let day = +newData[1];
+        let formattedDate =
+          (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day;
+
         let formattedTime =
           (hours < 10 ? "0" : "") +
           hours +
           ":" +
           (minutes < 10 ? "0" : "") +
           minutes;
-        const boardingDate = `${formattedDate} ${formattedTime}`;
+        const boardingDate = `${newData[2]}-${formattedDate} ${formattedTime}`;
+
+        console.log(boardingDate);
         call({
           orderTitle,
           boardingDate,
