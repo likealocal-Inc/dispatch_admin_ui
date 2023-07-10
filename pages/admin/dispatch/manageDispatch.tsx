@@ -253,8 +253,9 @@ export default function ManageDispatchModal({
       ) {
         setMessage("모든 데이터를 입력해주세요");
       } else {
+        console.log(boardingDate2);
         let date = new Date(boardingDate2);
-        const newData = date.toLocaleDateString().split("/");
+        const newData = date.toLocaleDateString("en-US").split("/");
         let hours = date.getHours();
         let minutes = date.getMinutes();
 
@@ -271,21 +272,26 @@ export default function ManageDispatchModal({
           minutes;
         const boardingDate = `${newData[2]}-${formattedDate} ${formattedTime}`;
 
-        console.log(boardingDate);
-        call({
-          orderTitle,
-          boardingDate,
-          startLocation: startInfo.location,
-          startAddress: startInfo.address,
-          goalLocation: goalInfo.location,
-          goalAddress: goalInfo.address,
-          information,
-          else01: "",
-          else02: "",
-          // 2023.06.09 추가
-          customName,
-          customPhone,
-        });
+        var regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+        if (regex.test(boardingDate)) {
+          call({
+            orderTitle,
+            boardingDate,
+            startLocation: startInfo.location,
+            startAddress: startInfo.address,
+            goalLocation: goalInfo.location,
+            goalAddress: goalInfo.address,
+            information,
+            else01: "",
+            else02: "",
+            // 2023.06.09 추가
+            customName,
+            customPhone,
+          });
+        } else {
+          alert("날짜데이터에 문제발생 :" + boardingDate);
+        }
+        return;
       }
     }
     // 시간대절 상품일경우
